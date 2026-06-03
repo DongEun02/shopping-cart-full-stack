@@ -13,7 +13,15 @@ export default function Checkbox({ label }: { label?: string }) {
           pointerEvents: 'none',
         }}
       />
-      <img src={uncheckedIcon} alt="" width={24} height={24} />
+      <img
+        src={uncheckedIcon}
+        alt=""
+        width={24}
+        height={24}
+        css={{
+          cursor: 'pointer',
+        }}
+      />
       <span
         css={{
           ...typography.label,

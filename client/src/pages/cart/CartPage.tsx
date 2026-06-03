@@ -1,4 +1,5 @@
 import { colors } from '../../shared/styles/theme';
+import Button from '../../shared/ui/Button';
 import Header from '../../shared/ui/Header';
 import CartSection from './ui/CartSection';
 
@@ -18,6 +19,7 @@ export default function CartPage() {
     >
       <Header page="cart" />
       <CartSection />
+      <Button type="active" text="주문 확인" />
     </div>
   );
 }

@@ -5,7 +5,8 @@ export default function CartSection() {
   return (
     <section
       css={{
-        minWidth: '90%',
+        height: '75vh',
+        overflowY: 'scroll',
         width: '100%',
         padding: '0 24px',
         display: 'flex',

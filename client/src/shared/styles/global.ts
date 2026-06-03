@@ -21,6 +21,7 @@ export const globalStyles = css`
       BlinkMacSystemFont,
       'Segoe UI',
       sans-serif;
+    scrollbar-color: #cfcfcf transparent;
   }
 
   button {

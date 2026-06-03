@@ -1,5 +1,5 @@
 import { Global } from '@emotion/react';
-import { globalStyles } from './styles/global';
+import { globalStyles } from './shared/styles/global';
 import { Routes, Route } from 'react-router-dom';
 
 import CartPage from './pages/cart/CartPage';

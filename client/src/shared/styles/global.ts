@@ -40,4 +40,8 @@ export const globalStyles = css`
     padding: 0;
     list-style: none;
   }
+
+  input {
+    margin: 0;
+  }
 `;

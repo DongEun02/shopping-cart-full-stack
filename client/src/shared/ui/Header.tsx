@@ -1,4 +1,4 @@
-import { colors, typography } from '../../styles/theme';
+import { colors, typography } from '../styles/theme';
 import back from '../../assets/back.svg';
 
 export default function Header({ page }: { page: string }) {

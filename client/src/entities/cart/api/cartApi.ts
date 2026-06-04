@@ -1,7 +1,8 @@
-// entities/cart/api/cartApi.ts
+import type { CartItem } from '../types';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function fetchCartItems() {
+export async function fetchCartItems(): Promise<CartItem[]> {
   const response = await fetch(`${API_BASE_URL}/carts`);
 
   if (!response.ok) {

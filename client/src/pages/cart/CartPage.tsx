@@ -1,5 +1,5 @@
 import type { CartItem } from '../../entities/cart/types';
-import { colors } from '../../shared/styles/theme';
+import { colors, typography } from '../../shared/styles/theme';
 import Button from '../../shared/ui/Button';
 import Header from '../../shared/ui/Header';
 import Spinner from '../../shared/ui/Spinner';
@@ -171,7 +171,28 @@ export default function CartPage() {
   }
 
   if (error) {
-    return <p>{error.message}</p>;
+    return (
+      <div
+        css={{
+          backgroundColor: colors.white,
+          width: '430px',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto',
+        }}
+      >
+        <p
+          css={{
+            ...typography.label,
+            color: 'red',
+          }}
+        >
+          {error.message}
+        </p>
+      </div>
+    );
   }
 
   return (

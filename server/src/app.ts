@@ -5,6 +5,7 @@ import productRouter from './productApi.ts';
 import shoppingCartRouter from './shoppingCartApi.ts';
 
 const app = express();
+app.use('/images', express.static('public/images'));
 app.use(cors());
 app.use(express.json());
 

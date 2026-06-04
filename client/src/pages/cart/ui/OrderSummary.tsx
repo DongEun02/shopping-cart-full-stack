@@ -1,6 +1,12 @@
 import info from '../../../assets/Info-outline.svg';
 import { colors, typography } from '../../../shared/styles/theme';
 
+type OrderSummaryProps = {
+  orderAmount: number;
+  deliveryFee: number;
+  totalAmount: number;
+};
+
 const summarySectionStyle = {
   width: '100%',
   display: 'flex',
@@ -9,7 +15,11 @@ const summarySectionStyle = {
   alignItems: 'center',
 };
 
-export default function OrderSummary() {
+export default function OrderSummary({
+  orderAmount,
+  deliveryFee,
+  totalAmount,
+}: OrderSummaryProps) {
   return (
     <section
       css={{
@@ -61,7 +71,7 @@ export default function OrderSummary() {
               ...typography.title,
             }}
           >
-            70,000원
+            {orderAmount}원
           </p>
         </div>
         <div css={summarySectionStyle}>
@@ -77,7 +87,7 @@ export default function OrderSummary() {
               ...typography.title,
             }}
           >
-            3,000원
+            {deliveryFee}원
           </p>
         </div>
       </div>
@@ -103,7 +113,7 @@ export default function OrderSummary() {
             ...typography.title,
           }}
         >
-          73,000원
+          {totalAmount.toLocaleString()}원
         </p>
       </div>
     </section>

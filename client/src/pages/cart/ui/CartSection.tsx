@@ -1,8 +1,38 @@
+import {
+  calculateDeliveryFee,
+  calculateOrderAmount,
+  calculateTotalAmount,
+} from '../../../entities/cart/calculate';
+import type { CartItem } from '../../../entities/cart/types';
 import { colors, typography } from '../../../shared/styles/theme';
 import CartList from './CartList';
 import OrderSummary from './OrderSummary';
 
-export default function CartSection() {
+type CartSectionProps = {
+  cartItems: CartItem[];
+};
+
+export default function CartSection({ cartItems }: CartSectionProps) {
+  const orderAmount = calculateOrderAmount(cartItems);
+  const deliveryFee = calculateDeliveryFee(orderAmount);
+  const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
+
+  // 상품이 없는 경우
+  if (cartItems.length === 0) {
+    return (
+      <p
+        css={{
+          color: colors.text,
+          ...typography.info,
+          textAlign: 'center',
+          margin: 'auto 0',
+        }}
+      >
+        장바구니에 담은 상품이 없습니다.
+      </p>
+    );
+  }
+
   return (
     <section
       css={{
@@ -34,8 +64,12 @@ export default function CartSection() {
           현재 2종류의 상품이 담겨있습니다.
         </p>
       </div>
-      <CartList />
-      <OrderSummary />
+      <CartList cartItems={cartItems} />
+      <OrderSummary
+        orderAmount={orderAmount}
+        deliveryFee={deliveryFee}
+        totalAmount={totalAmount}
+      />
     </section>
   );
 }

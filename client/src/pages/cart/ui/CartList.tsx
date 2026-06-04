@@ -1,7 +1,12 @@
-import CartItem from '../../../entities/cart/ui/CartItem';
+import type { CartItem } from '../../../entities/cart/types';
+import CartItemCard from '../../../entities/cart/ui/CartItemCard';
 import Checkbox from '../../../shared/ui/CheckBox';
 
-export default function CartList() {
+type CartListProps = {
+  cartItems: CartItem[];
+};
+
+export default function CartList({ cartItems }: CartListProps) {
   return (
     <section
       css={{
@@ -18,8 +23,9 @@ export default function CartList() {
           gap: '20px',
         }}
       >
-        <CartItem />
-        <CartItem />
+        {cartItems.map((cartItem, index) => {
+          return <CartItemCard key={index} cartItem={cartItem} />;
+        })}
       </ul>
     </section>
   );

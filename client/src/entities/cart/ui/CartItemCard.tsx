@@ -1,6 +1,11 @@
 // entities/cart/ui/CartItem.tsx
 import CheckBox from '../../../shared/ui/CheckBox';
 import { colors, typography } from '../../../shared/styles/theme';
+import type { CartItem } from '../types';
+
+type CartItemCardProps = {
+  cartItem: CartItem;
+};
 
 const quantityButtonStyle = {
   width: '24px',
@@ -13,7 +18,7 @@ const quantityButtonStyle = {
   padding: 0,
 };
 
-export default function CartItem() {
+export default function CartItemCard({ cartItem }: CartItemCardProps) {
   return (
     <li
       css={{
@@ -51,15 +56,14 @@ export default function CartItem() {
         삭제
       </button>
 
-      {/* 나중에 이미지로 변경 */}
-      <div
+      <img
         css={{
-          width: '112px',
-          height: '112px',
           marginTop: '48px',
           borderRadius: '8px',
-          backgroundColor: '#dddddd',
         }}
+        src={cartItem.product.image}
+        width={112}
+        height={112}
       />
 
       <div
@@ -79,7 +83,7 @@ export default function CartItem() {
               ...typography.label,
             }}
           >
-            상품이름
+            {cartItem.product.name}
           </p>
 
           <p
@@ -88,7 +92,7 @@ export default function CartItem() {
               color: colors.black,
             }}
           >
-            35,000원
+            {cartItem.product.price}
           </p>
         </div>
 
@@ -108,7 +112,7 @@ export default function CartItem() {
               ...typography.label,
             }}
           >
-            2
+            {cartItem.quantity}
           </span>
           <button type="button" css={quantityButtonStyle}>
             +

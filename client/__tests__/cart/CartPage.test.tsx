@@ -5,9 +5,11 @@ import {
   waitFor,
   within,
 } from '@testing-library/react';
+import { http, HttpResponse, delay } from 'msw';
 import { MemoryRouter } from 'react-router-dom';
 
 import CartPage from '../../src/pages/cart/CartPage';
+import { server } from '../../src/mocks/server';
 
 function renderCartPage() {
   return render(
@@ -20,6 +22,37 @@ function renderCartPage() {
 describe('CartPage', () => {
   beforeEach(() => {
     localStorage.clear();
+  });
+
+  test('장바구니 조회 중에는 로딩 스피너를 보여준다.', () => {
+    server.use(
+      http.get('/carts', async () => {
+        await delay(100);
+
+        return HttpResponse.json([]);
+      }),
+    );
+
+    renderCartPage();
+
+    expect(screen.getByRole('status', { name: '로딩 중' })).toBeInTheDocument();
+  });
+
+  test('장바구니 조회 실패 시 에러 메시지를 보여준다.', async () => {
+    server.use(
+      http.get('/carts', () => {
+        return HttpResponse.json(
+          { message: '장바구니 조회 실패' },
+          { status: 500 },
+        );
+      }),
+    );
+
+    renderCartPage();
+
+    expect(
+      await screen.findByText('장바구니 목록을 불러오지 못했습니다.'),
+    ).toBeInTheDocument();
   });
 
   test('장바구니 조회 성공 시 상품 목록과 주문 금액을 보여준다.', async () => {

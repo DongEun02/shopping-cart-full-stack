@@ -1,6 +1,23 @@
 import { colors, typography } from '../../../shared/styles/theme';
 
+import { useLocation } from 'react-router-dom';
+import type { CartItem } from '../../../entities/cart/types';
+
+type CheckoutState = {
+  cartItems: CartItem[];
+  totalAmount: number;
+};
+
 export default function OrderCheck() {
+  const location = useLocation();
+  const state = location.state as CheckoutState | null;
+
+  const cartItems = state.cartItems;
+  const itemCount = cartItems.reduce((count, item) => {
+    return count + item.quantity;
+  }, 0);
+  const totalAmount = state.totalAmount;
+
   return (
     <section
       css={{
@@ -27,7 +44,7 @@ export default function OrderCheck() {
           textAlign: 'center',
         }}
       >
-        총 2종류의 상품 4개를 주문합니다. <br />
+        총 {cartItems.length}종류의 상품 {itemCount}개를 주문합니다. <br />
         최종 결제 금액을 확인해 주세요.
       </p>
       <div
@@ -52,7 +69,7 @@ export default function OrderCheck() {
             ...typography.title,
           }}
         >
-          120,000원
+          {totalAmount.toLocaleString()}원
         </p>
       </div>
     </section>

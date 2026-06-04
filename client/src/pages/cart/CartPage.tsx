@@ -21,7 +21,8 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const navigate = useNavigate();
 
-  const orderAmount = calculateOrderAmount(cartItems);
+  const selectedItems = cartItems.filter((item) => item.isSelected);
+  const orderAmount = calculateOrderAmount(selectedItems);
   const deliveryFee = calculateDeliveryFee(orderAmount);
   const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
 
@@ -152,7 +153,14 @@ export default function CartPage() {
       <Button
         type={type}
         text="주문 확인"
-        onClick={() => navigate('checkout')}
+        onClick={() =>
+          navigate('checkout', {
+            state: {
+              cartItems: selectedItems,
+              totalAmount,
+            },
+          })
+        }
       />
     </div>
   );

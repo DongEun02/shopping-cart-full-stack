@@ -8,6 +8,11 @@ import {
   updateCartItemQuantity,
   fetchCartItems,
 } from '../../entities/cart/api/cartApi';
+import {
+  calculateOrderAmount,
+  calculateDeliveryFee,
+  calculateTotalAmount,
+} from '../../entities/cart/calculate';
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +20,30 @@ import { useNavigate } from 'react-router-dom';
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const navigate = useNavigate();
+
+  const orderAmount = calculateOrderAmount(cartItems);
+  const deliveryFee = calculateDeliveryFee(orderAmount);
+  const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
+
+  const isAllSelected =
+    cartItems.length > 0 && cartItems.every((item) => item.isSelected);
+
+  const handleToggleItem = (id: string, checked: boolean) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.product.id === id ? { ...item, isSelected: checked } : item,
+      ),
+    );
+  };
+
+  const handleToggleAll = (checked: boolean) => {
+    setCartItems((prev) =>
+      prev.map((item) => ({
+        ...item,
+        isSelected: checked,
+      })),
+    );
+  };
 
   const handleDelete = async (id: string) => {
     const currentItem = cartItems.find((item) => item.product.id === id);
@@ -77,7 +106,12 @@ export default function CartPage() {
     async function fetchCart() {
       try {
         const data = await fetchCartItems();
-        setCartItems(data);
+        setCartItems(
+          data.map((item) => ({
+            ...item,
+            isSelected: true,
+          })),
+        );
       } catch (error) {
         if (error instanceof Error) {
           console.log(error.message);
@@ -108,6 +142,12 @@ export default function CartPage() {
         handleIncrease={handleIncrease}
         handleDecrease={handleDecrease}
         handleDelete={handleDelete}
+        isAllSelected={isAllSelected}
+        handleToggleItem={handleToggleItem}
+        handleToggleAll={handleToggleAll}
+        orderAmount={orderAmount}
+        deliveryFee={deliveryFee}
+        totalAmount={totalAmount}
       />
       <Button
         type={type}

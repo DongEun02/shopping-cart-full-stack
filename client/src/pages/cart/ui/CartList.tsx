@@ -7,6 +7,9 @@ type CartListProps = {
   handleIncrease: (id: string) => Promise<void>;
   handleDecrease: (id: string) => Promise<void>;
   handleDelete: (id: string) => Promise<void>;
+  isAllSelected: boolean;
+  handleToggleItem: (id: string, checked: boolean) => void;
+  handleToggleAll: (checked: boolean) => void;
 };
 
 export default function CartList({
@@ -14,6 +17,9 @@ export default function CartList({
   handleIncrease,
   handleDecrease,
   handleDelete,
+  isAllSelected,
+  handleToggleItem,
+  handleToggleAll,
 }: CartListProps) {
   return (
     <section
@@ -23,7 +29,11 @@ export default function CartList({
         gap: '20px',
       }}
     >
-      <Checkbox label="전체선택" />
+      <Checkbox
+        checked={isAllSelected}
+        label="전체선택"
+        onChange={handleToggleAll}
+      />
       <ul
         css={{
           display: 'flex',
@@ -39,6 +49,7 @@ export default function CartList({
               handleIncrease={handleIncrease}
               handleDecrease={handleDecrease}
               handleDelete={handleDelete}
+              handleToggleItem={handleToggleItem}
             />
           );
         })}

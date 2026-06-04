@@ -1,8 +1,3 @@
-import {
-  calculateDeliveryFee,
-  calculateOrderAmount,
-  calculateTotalAmount,
-} from '../../../entities/cart/calculate';
 import type { CartItem } from '../../../entities/cart/types';
 import { colors, typography } from '../../../shared/styles/theme';
 import CartList from './CartList';
@@ -13,6 +8,12 @@ type CartSectionProps = {
   handleIncrease: (id: string) => Promise<void>;
   handleDecrease: (id: string) => Promise<void>;
   handleDelete: (id: string) => Promise<void>;
+  isAllSelected: boolean;
+  handleToggleItem: (id: string, checked: boolean) => void;
+  handleToggleAll: (checked: boolean) => void;
+  orderAmount: number;
+  deliveryFee: number;
+  totalAmount: number;
 };
 
 export default function CartSection({
@@ -20,11 +21,13 @@ export default function CartSection({
   handleIncrease,
   handleDecrease,
   handleDelete,
+  isAllSelected,
+  handleToggleItem,
+  handleToggleAll,
+  orderAmount,
+  deliveryFee,
+  totalAmount,
 }: CartSectionProps) {
-  const orderAmount = calculateOrderAmount(cartItems);
-  const deliveryFee = calculateDeliveryFee(orderAmount);
-  const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
-
   // 상품이 없는 경우
   if (cartItems.length === 0) {
     return (
@@ -77,6 +80,9 @@ export default function CartSection({
         handleIncrease={handleIncrease}
         handleDecrease={handleDecrease}
         handleDelete={handleDelete}
+        isAllSelected={isAllSelected}
+        handleToggleItem={handleToggleItem}
+        handleToggleAll={handleToggleAll}
       />
       <OrderSummary
         orderAmount={orderAmount}

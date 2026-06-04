@@ -8,6 +8,7 @@ type CartItemCardProps = {
   handleIncrease: (id: string) => Promise<void>;
   handleDecrease: (id: string) => Promise<void>;
   handleDelete: (id: string) => Promise<void>;
+  handleToggleItem: (id: string, checked: boolean) => void;
 };
 
 const quantityButtonStyle = {
@@ -26,6 +27,7 @@ export default function CartItemCard({
   handleIncrease,
   handleDecrease,
   handleDelete,
+  handleToggleItem,
 }: CartItemCardProps) {
   return (
     <li
@@ -43,7 +45,10 @@ export default function CartItemCard({
           left: 0,
         }}
       >
-        <CheckBox />
+        <CheckBox
+          checked={cartItem.isSelected}
+          onChange={(checked) => handleToggleItem(cartItem.product.id, checked)}
+        />
       </div>
 
       <button

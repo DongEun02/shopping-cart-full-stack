@@ -13,6 +13,10 @@ import {
   calculateDeliveryFee,
   calculateTotalAmount,
 } from '../../entities/cart/calculate';
+import {
+  getSelectedCartItemIds,
+  saveSelectedCartItemIds,
+} from '../../entities/cart/storage';
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -30,20 +34,28 @@ export default function CartPage() {
     cartItems.length > 0 && cartItems.every((item) => item.isSelected);
 
   const handleToggleItem = (id: string, checked: boolean) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
+    setCartItems((prev) => {
+      const nextCartItems = prev.map((item) =>
         item.product.id === id ? { ...item, isSelected: checked } : item,
-      ),
-    );
+      );
+
+      saveSelectedCartItemIds(nextCartItems);
+
+      return nextCartItems;
+    });
   };
 
   const handleToggleAll = (checked: boolean) => {
-    setCartItems((prev) =>
-      prev.map((item) => ({
+    setCartItems((prev) => {
+      const nextCartItems = prev.map((item) => ({
         ...item,
         isSelected: checked,
-      })),
-    );
+      }));
+
+      saveSelectedCartItemIds(nextCartItems);
+
+      return nextCartItems;
+    });
   };
 
   const handleDelete = async (id: string) => {
@@ -58,7 +70,13 @@ export default function CartPage() {
       }
     }
 
-    setCartItems((prev) => prev.filter((item) => item.product.id !== id));
+    setCartItems((prev) => {
+      const nextCartItems = prev.filter((item) => item.product.id !== id);
+
+      saveSelectedCartItemIds(nextCartItems);
+
+      return nextCartItems;
+    });
   };
 
   const handleIncrease = async (id: string) => {
@@ -107,10 +125,14 @@ export default function CartPage() {
     async function fetchCart() {
       try {
         const data = await fetchCartItems();
+        const selectedCartItemIds = getSelectedCartItemIds();
+
         setCartItems(
           data.map((item) => ({
             ...item,
-            isSelected: true,
+            isSelected: selectedCartItemIds
+              ? selectedCartItemIds.includes(item.product.id)
+              : true,
           })),
         );
       } catch (error) {

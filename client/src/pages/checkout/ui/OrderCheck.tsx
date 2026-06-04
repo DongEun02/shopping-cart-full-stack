@@ -12,11 +12,11 @@ export default function OrderCheck() {
   const location = useLocation();
   const state = location.state as CheckoutState | null;
 
-  const cartItems = state.cartItems;
+  const cartItems = state?.cartItems ?? [];
   const itemCount = cartItems.reduce((count, item) => {
     return count + item.quantity;
   }, 0);
-  const totalAmount = state.totalAmount;
+  const totalAmount = state?.totalAmount ?? 0;
 
   return (
     <section

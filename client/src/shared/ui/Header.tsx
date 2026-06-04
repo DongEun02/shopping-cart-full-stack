@@ -1,7 +1,10 @@
 import { colors, typography } from '../styles/theme';
 import back from '../../assets/back.svg';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header({ page }: { page: string }) {
+  const navigate = useNavigate();
+
   const text =
     page === 'cart' ? (
       <p
@@ -14,7 +17,14 @@ export default function Header({ page }: { page: string }) {
         SHOP
       </p>
     ) : (
-      <img alt="뒤로가기" src={back} width={32} height={32} />
+      <img
+        alt="뒤로가기"
+        src={back}
+        width={32}
+        height={32}
+        onClick={() => navigate('/')}
+        css={{ cursor: 'pointer' }}
+      />
     );
 
   return (

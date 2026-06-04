@@ -61,9 +61,10 @@ export default function CartItemCard({ cartItem }: CartItemCardProps) {
           marginTop: '48px',
           borderRadius: '8px',
         }}
-        src={cartItem.product.image}
+        src={cartItem.product.image ?? undefined}
         width={112}
         height={112}
+        alt="상품 이미지"
       />
 
       <div

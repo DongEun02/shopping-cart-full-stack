@@ -1,5 +1,6 @@
 import { colors, typography } from '../../../shared/styles/theme';
 import CartList from './CartList';
+import OrderSummary from './OrderSummary';
 
 export default function CartSection() {
   return (
@@ -34,6 +35,7 @@ export default function CartSection() {
         </p>
       </div>
       <CartList />
+      <OrderSummary />
     </section>
   );
 }

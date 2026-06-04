@@ -1,6 +1,5 @@
 import type { CartItem } from '../types';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from '../../../shared/config/env';
 
 export async function fetchCartItems(): Promise<CartItem[]> {
   const response = await fetch(`${API_BASE_URL}/carts`);

@@ -23,6 +23,8 @@ module.exports = {
     '/node_modules/(?!(msw|@mswjs|@open-draft|until-async|undici|rettime)/)',
   ],
   moduleNameMapper: {
+    '^(.*/)?shared/config/env$': '<rootDir>/src/test/envMock.ts',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '\\.(svg|png|jpg|jpeg|gif|webp)$': '<rootDir>/src/test/fileMock.cjs',
   },
 };

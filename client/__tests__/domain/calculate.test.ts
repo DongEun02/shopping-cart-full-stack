@@ -16,6 +16,7 @@ describe('금액 계산 테스트', () => {
         image: 'example/com',
       },
       quantity: 2,
+      isSelected: true,
     },
     {
       product: {
@@ -25,6 +26,7 @@ describe('금액 계산 테스트', () => {
         image: 'example/com',
       },
       quantity: 3,
+      isSelected: true,
     },
   ];
 
@@ -37,6 +39,7 @@ describe('금액 계산 테스트', () => {
         image: 'example/com',
       },
       quantity: 1,
+      isSelected: true,
     },
     {
       product: {
@@ -46,6 +49,7 @@ describe('금액 계산 테스트', () => {
         image: 'example/com',
       },
       quantity: 1,
+      isSelected: true,
     },
   ];
 

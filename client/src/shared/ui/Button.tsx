@@ -13,6 +13,7 @@ export default function Button({ type, text }: { type: string; text: string }) {
         color: colors.white,
         position: 'fixed',
         bottom: '0',
+        border: 'none',
       }}
     >
       {text}

@@ -1,4 +1,3 @@
-import type { CartItem } from '../../entities/cart/types';
 import { colors, typography } from '../../shared/styles/theme';
 import Button from '../../shared/ui/Button';
 import Header from '../../shared/ui/Header';
@@ -10,145 +9,44 @@ import {
   fetchCartItems,
 } from '../../entities/cart/api/cartApi';
 import {
-  calculateOrderAmount,
-  calculateDeliveryFee,
-  calculateTotalAmount,
-} from '../../entities/cart/calculate';
-import {
   getSelectedCartItemIds,
   saveSelectedCartItemIds,
 } from '../../entities/cart/storage';
-import { useQuery } from '../../shared/hooks/useQuery';
+import {
+  calculateDeliveryFee,
+  calculateOrderAmount,
+  calculateTotalAmount,
+} from '../../entities/cart/calculate';
+import { useCart } from './hooks/useCart';
 
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const navigate = useNavigate();
+
+  const {
+    cartItems,
+    isLoading,
+    error,
+    increaseQuantity,
+    decreaseQuantity,
+    removeCartItem,
+    changeCartItemSelection,
+    changeAllCartItemsSelection,
+  } = useCart({
+    fetchItems: fetchCartItems,
+    updateItemQuantity: updateCartItemQuantity,
+    removeItem: deleteCartItem,
+    loadSelectedItemIds: getSelectedCartItemIds,
+    saveSelectedItems: saveSelectedCartItemIds,
+  });
 
   const selectedItems = cartItems.filter((item) => item.isSelected);
   const orderAmount = calculateOrderAmount(selectedItems);
   const deliveryFee = calculateDeliveryFee(orderAmount);
   const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
-
   const isAllSelected =
     cartItems.length > 0 && cartItems.every((item) => item.isSelected);
-
-  const handleToggleItem = (id: string, checked: boolean) => {
-    setCartItems((prev) => {
-      const nextCartItems = prev.map((item) =>
-        item.product.id === id ? { ...item, isSelected: checked } : item,
-      );
-
-      saveSelectedCartItemIds(nextCartItems);
-
-      return nextCartItems;
-    });
-  };
-
-  const handleToggleAll = (checked: boolean) => {
-    setCartItems((prev) => {
-      const nextCartItems = prev.map((item) => ({
-        ...item,
-        isSelected: checked,
-      }));
-
-      saveSelectedCartItemIds(nextCartItems);
-
-      return nextCartItems;
-    });
-  };
-
-  const handleDelete = async (id: string) => {
-    const currentItem = cartItems.find((item) => item.product.id === id);
-    if (!currentItem) return;
-
-    try {
-      await deleteCartItem(id);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      }
-    }
-
-    setCartItems((prev) => {
-      const nextCartItems = prev.filter((item) => item.product.id !== id);
-
-      saveSelectedCartItemIds(nextCartItems);
-
-      return nextCartItems;
-    });
-  };
-
-  const handleIncrease = async (id: string) => {
-    const currentItem = cartItems.find((item) => item.product.id === id);
-    if (!currentItem) return;
-
-    const nextQuantity = Math.min(99, currentItem.quantity + 1);
-
-    try {
-      await updateCartItemQuantity(id, nextQuantity);
-
-      setCartItems((prev) =>
-        prev.map((item) =>
-          item.product.id === id ? { ...item, quantity: nextQuantity } : item,
-        ),
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      }
-    }
-  };
-
-  const handleDecrease = async (id: string) => {
-    const currentItem = cartItems.find((item) => item.product.id === id);
-    if (!currentItem) return;
-
-    const nextQuantity = Math.max(1, currentItem.quantity - 1);
-
-    try {
-      await updateCartItemQuantity(id, nextQuantity);
-
-      setCartItems((prev) =>
-        prev.map((item) =>
-          item.product.id === id ? { ...item, quantity: nextQuantity } : item,
-        ),
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      }
-    }
-  };
-
-  const {
-    data: fetchedCartItems,
-    isLoading,
-    error,
-  } = useQuery('cartItems', fetchCartItems);
-
-  useEffect(() => {
-    if (!fetchedCartItems) return;
-
-    const cartItems = fetchedCartItems;
-
-    function syncCartItems() {
-      const selectedCartItemIds = getSelectedCartItemIds();
-
-      setCartItems(
-        cartItems.map((item) => ({
-          ...item,
-          isSelected: selectedCartItemIds
-            ? selectedCartItemIds.includes(item.product.id)
-            : true,
-        })),
-      );
-    }
-
-    syncCartItems();
-  }, [fetchedCartItems]);
 
   const type = cartItems.length === 0 ? 'inactive' : 'active';
 
@@ -211,12 +109,12 @@ export default function CartPage() {
       <Header page="cart" />
       <CartSection
         cartItems={cartItems}
-        onIncrease={handleIncrease}
-        onDecrease={handleDecrease}
-        onDelete={handleDelete}
+        onIncrease={increaseQuantity}
+        onDecrease={decreaseQuantity}
+        onDelete={removeCartItem}
         isAllSelected={isAllSelected}
-        onToggleItem={handleToggleItem}
-        onToggleAll={handleToggleAll}
+        onToggleItem={changeCartItemSelection}
+        onToggleAll={changeAllCartItemsSelection}
         orderAmount={orderAmount}
         deliveryFee={deliveryFee}
         totalAmount={totalAmount}

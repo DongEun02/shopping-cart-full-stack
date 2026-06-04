@@ -1,10 +1,19 @@
 import { colors, typography } from '../styles/theme';
 
-export default function Button({ type, text }: { type: string; text: string }) {
+type ButtonProps = {
+  type: string;
+  text: string;
+  onClick: () => void;
+};
+
+export default function Button({ type, text, onClick }: ButtonProps) {
   const background = type === 'active' ? colors.black : colors.inactive;
+  const isActive = type === 'active' ? false : true;
 
   return (
     <button
+      disabled={isActive}
+      onClick={onClick}
       css={{
         width: '430px',
         height: '64px',

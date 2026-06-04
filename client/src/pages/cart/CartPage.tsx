@@ -17,6 +17,7 @@ import {
   getSelectedCartItemIds,
   saveSelectedCartItemIds,
 } from '../../entities/cart/storage';
+import { useQuery } from '../../shared/hooks/useQuery';
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -121,30 +122,42 @@ export default function CartPage() {
     }
   };
 
-  useEffect(() => {
-    async function fetchCart() {
-      try {
-        const data = await fetchCartItems();
-        const selectedCartItemIds = getSelectedCartItemIds();
+  const {
+    data: fetchedCartItems,
+    isLoading,
+    error,
+  } = useQuery('cartItems', fetchCartItems);
 
-        setCartItems(
-          data.map((item) => ({
-            ...item,
-            isSelected: selectedCartItemIds
-              ? selectedCartItemIds.includes(item.product.id)
-              : true,
-          })),
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          console.log(error.message);
-        }
-      }
+  useEffect(() => {
+    if (!fetchedCartItems) return;
+
+    const cartItems = fetchedCartItems;
+
+    function syncCartItems() {
+      const selectedCartItemIds = getSelectedCartItemIds();
+
+      setCartItems(
+        cartItems.map((item) => ({
+          ...item,
+          isSelected: selectedCartItemIds
+            ? selectedCartItemIds.includes(item.product.id)
+            : true,
+        })),
+      );
     }
-    fetchCart();
-  }, []);
+
+    syncCartItems();
+  }, [fetchedCartItems]);
 
   const type = cartItems.length === 0 ? 'inactive' : 'active';
+
+  if (isLoading) {
+    return <p>장바구니를 불러오는 중입니다.</p>;
+  }
+
+  if (error) {
+    return <p>{error.message}</p>;
+  }
 
   return (
     <div

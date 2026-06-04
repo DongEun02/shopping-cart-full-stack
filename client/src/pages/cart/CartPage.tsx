@@ -2,6 +2,7 @@ import type { CartItem } from '../../entities/cart/types';
 import { colors } from '../../shared/styles/theme';
 import Button from '../../shared/ui/Button';
 import Header from '../../shared/ui/Header';
+import Spinner from '../../shared/ui/Spinner';
 import CartSection from './ui/CartSection';
 import {
   deleteCartItem,
@@ -152,7 +153,21 @@ export default function CartPage() {
   const type = cartItems.length === 0 ? 'inactive' : 'active';
 
   if (isLoading) {
-    return <p>장바구니를 불러오는 중입니다.</p>;
+    return (
+      <div
+        css={{
+          backgroundColor: colors.white,
+          width: '430px',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto',
+        }}
+      >
+        <Spinner />
+      </div>
+    );
   }
 
   if (error) {

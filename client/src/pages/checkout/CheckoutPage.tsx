@@ -2,8 +2,11 @@ import Header from '../../shared/ui/Header';
 import Button from '../../shared/ui/Button';
 import OrderCheck from './ui/OrderCheck';
 import { colors } from '../../shared/styles/theme';
+import { useNavigate } from 'react-router-dom';
 
 export default function CheckoutPage() {
+  const navigate = useNavigate();
+
   return (
     <div
       css={{
@@ -19,7 +22,11 @@ export default function CheckoutPage() {
     >
       <Header page="checkout" />
       <OrderCheck />
-      <Button type="inactive" text="결제하기" />
+      <Button
+        type="inactive"
+        text="결제하기"
+        onClick={() => navigate('/pay')}
+      />
     </div>
   );
 }

@@ -4,14 +4,16 @@ import Checkbox from '../../../shared/ui/CheckBox';
 
 type CartListProps = {
   cartItems: CartItem[];
-  handleIncrease: (id: string) => void;
-  handleDecrease: (id: string) => void;
+  handleIncrease: (id: string) => Promise<void>;
+  handleDecrease: (id: string) => Promise<void>;
+  handleDelete: (id: string) => Promise<void>;
 };
 
 export default function CartList({
   cartItems,
   handleIncrease,
   handleDecrease,
+  handleDelete,
 }: CartListProps) {
   return (
     <section
@@ -36,6 +38,7 @@ export default function CartList({
               cartItem={cartItem}
               handleIncrease={handleIncrease}
               handleDecrease={handleDecrease}
+              handleDelete={handleDelete}
             />
           );
         })}

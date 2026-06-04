@@ -10,14 +10,16 @@ import OrderSummary from './OrderSummary';
 
 type CartSectionProps = {
   cartItems: CartItem[];
-  handleIncrease: (id: string) => void;
-  handleDecrease: (id: string) => void;
+  handleIncrease: (id: string) => Promise<void>;
+  handleDecrease: (id: string) => Promise<void>;
+  handleDelete: (id: string) => Promise<void>;
 };
 
 export default function CartSection({
   cartItems,
   handleIncrease,
   handleDecrease,
+  handleDelete,
 }: CartSectionProps) {
   const orderAmount = calculateOrderAmount(cartItems);
   const deliveryFee = calculateDeliveryFee(orderAmount);
@@ -74,6 +76,7 @@ export default function CartSection({
         cartItems={cartItems}
         handleIncrease={handleIncrease}
         handleDecrease={handleDecrease}
+        handleDelete={handleDelete}
       />
       <OrderSummary
         orderAmount={orderAmount}

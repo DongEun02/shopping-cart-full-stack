@@ -5,8 +5,9 @@ import type { CartItem } from '../types';
 
 type CartItemCardProps = {
   cartItem: CartItem;
-  handleIncrease: (id: string) => void;
-  handleDecrease: (id: string) => void;
+  handleIncrease: (id: string) => Promise<void>;
+  handleDecrease: (id: string) => Promise<void>;
+  handleDelete: (id: string) => Promise<void>;
 };
 
 const quantityButtonStyle = {
@@ -24,6 +25,7 @@ export default function CartItemCard({
   cartItem,
   handleIncrease,
   handleDecrease,
+  handleDelete,
 }: CartItemCardProps) {
   return (
     <li
@@ -58,6 +60,7 @@ export default function CartItemCard({
           color: colors.text,
           ...typography.label,
         }}
+        onClick={() => handleDelete(cartItem.product.id)}
       >
         삭제
       </button>

@@ -10,22 +10,65 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const navigate = useNavigate();
 
-  const handleIncrease = (id: string) => {
+  const handleDelete = async (id: string) => {
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const currentItem = cartItems.find((item) => item.product.id === id);
+    if (!currentItem) return;
+
+    await fetch(`${API_BASE_URL}/carts/${id}`, {
+      method: 'DELETE',
+    });
+
+    setCartItems((prev) => prev.filter((item) => item.product.id !== id));
+  };
+
+  const handleIncrease = async (id: string) => {
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const currentItem = cartItems.find((item) => item.product.id === id);
+    if (!currentItem) return;
+
+    const nextQuantity = Math.min(99, currentItem.quantity + 1);
+
+    await fetch(`${API_BASE_URL}/carts/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        quantity: nextQuantity,
+      }),
+    });
+
     setCartItems((prev) =>
       prev.map((item) =>
-        item.product.id === id
-          ? { ...item, quantity: Math.min(99, item.quantity + 1) }
-          : item,
+        item.product.id === id ? { ...item, quantity: nextQuantity } : item,
       ),
     );
   };
 
-  const handleDecrease = (id: string) => {
+  const handleDecrease = async (id: string) => {
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const currentItem = cartItems.find((item) => item.product.id === id);
+    if (!currentItem) return;
+
+    const nextQuantity = Math.max(1, currentItem.quantity - 1);
+
+    await fetch(`${API_BASE_URL}/carts/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        quantity: nextQuantity,
+      }),
+    });
+
     setCartItems((prev) =>
       prev.map((item) =>
-        item.product.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity - 1) }
-          : item,
+        item.product.id === id ? { ...item, quantity: nextQuantity } : item,
       ),
     );
   };
@@ -60,6 +103,7 @@ export default function CartPage() {
         cartItems={cartItems}
         handleIncrease={handleIncrease}
         handleDecrease={handleDecrease}
+        handleDelete={handleDelete}
       />
       <Button
         type={type}

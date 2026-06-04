@@ -5,12 +5,12 @@ import OrderSummary from './OrderSummary';
 
 type CartSectionProps = {
   cartItems: CartItem[];
-  handleIncrease: (id: string) => Promise<void>;
-  handleDecrease: (id: string) => Promise<void>;
-  handleDelete: (id: string) => Promise<void>;
+  onIncrease: (id: string) => Promise<void>;
+  onDecrease: (id: string) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
   isAllSelected: boolean;
-  handleToggleItem: (id: string, checked: boolean) => void;
-  handleToggleAll: (checked: boolean) => void;
+  onToggleItem: (id: string, checked: boolean) => void;
+  onToggleAll: (checked: boolean) => void;
   orderAmount: number;
   deliveryFee: number;
   totalAmount: number;
@@ -18,12 +18,12 @@ type CartSectionProps = {
 
 export default function CartSection({
   cartItems,
-  handleIncrease,
-  handleDecrease,
-  handleDelete,
+  onIncrease,
+  onDecrease,
+  onDelete,
   isAllSelected,
-  handleToggleItem,
-  handleToggleAll,
+  onToggleItem,
+  onToggleAll,
   orderAmount,
   deliveryFee,
   totalAmount,
@@ -77,12 +77,12 @@ export default function CartSection({
       </div>
       <CartList
         cartItems={cartItems}
-        handleIncrease={handleIncrease}
-        handleDecrease={handleDecrease}
-        handleDelete={handleDelete}
+        onIncrease={onIncrease}
+        onDecrease={onDecrease}
+        onDelete={onDelete}
         isAllSelected={isAllSelected}
-        handleToggleItem={handleToggleItem}
-        handleToggleAll={handleToggleAll}
+        onToggleItem={onToggleItem}
+        onToggleAll={onToggleAll}
       />
       <OrderSummary
         orderAmount={orderAmount}

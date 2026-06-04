@@ -211,12 +211,12 @@ export default function CartPage() {
       <Header page="cart" />
       <CartSection
         cartItems={cartItems}
-        handleIncrease={handleIncrease}
-        handleDecrease={handleDecrease}
-        handleDelete={handleDelete}
+        onIncrease={handleIncrease}
+        onDecrease={handleDecrease}
+        onDelete={handleDelete}
         isAllSelected={isAllSelected}
-        handleToggleItem={handleToggleItem}
-        handleToggleAll={handleToggleAll}
+        onToggleItem={handleToggleItem}
+        onToggleAll={handleToggleAll}
         orderAmount={orderAmount}
         deliveryFee={deliveryFee}
         totalAmount={totalAmount}

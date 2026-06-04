@@ -5,10 +5,10 @@ import type { CartItem } from '../types';
 
 type CartItemCardProps = {
   cartItem: CartItem;
-  handleIncrease: (id: string) => Promise<void>;
-  handleDecrease: (id: string) => Promise<void>;
-  handleDelete: (id: string) => Promise<void>;
-  handleToggleItem: (id: string, checked: boolean) => void;
+  onIncrease: (id: string) => Promise<void>;
+  onDecrease: (id: string) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
+  onToggleItem: (id: string, checked: boolean) => void;
 };
 
 const quantityButtonStyle = {
@@ -24,10 +24,10 @@ const quantityButtonStyle = {
 
 export default function CartItemCard({
   cartItem,
-  handleIncrease,
-  handleDecrease,
-  handleDelete,
-  handleToggleItem,
+  onIncrease,
+  onDecrease,
+  onDelete,
+  onToggleItem,
 }: CartItemCardProps) {
   return (
     <li
@@ -47,7 +47,7 @@ export default function CartItemCard({
       >
         <CheckBox
           checked={cartItem.isSelected}
-          onChange={(checked) => handleToggleItem(cartItem.product.id, checked)}
+          onChange={(checked) => onToggleItem(cartItem.product.id, checked)}
         />
       </div>
 
@@ -65,7 +65,7 @@ export default function CartItemCard({
           color: colors.text,
           ...typography.label,
         }}
-        onClick={() => handleDelete(cartItem.product.id)}
+        onClick={() => onDelete(cartItem.product.id)}
       >
         삭제
       </button>
@@ -121,7 +121,7 @@ export default function CartItemCard({
           <button
             type="button"
             css={quantityButtonStyle}
-            onClick={() => handleDecrease(cartItem.product.id)}
+            onClick={() => onDecrease(cartItem.product.id)}
           >
             -
           </button>
@@ -136,7 +136,7 @@ export default function CartItemCard({
           <button
             type="button"
             css={quantityButtonStyle}
-            onClick={() => handleIncrease(cartItem.product.id)}
+            onClick={() => onIncrease(cartItem.product.id)}
           >
             +
           </button>

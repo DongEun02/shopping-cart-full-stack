@@ -4,22 +4,22 @@ import Checkbox from '../../../shared/ui/CheckBox';
 
 type CartListProps = {
   cartItems: CartItem[];
-  handleIncrease: (id: string) => Promise<void>;
-  handleDecrease: (id: string) => Promise<void>;
-  handleDelete: (id: string) => Promise<void>;
+  onIncrease: (id: string) => Promise<void>;
+  onDecrease: (id: string) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
   isAllSelected: boolean;
-  handleToggleItem: (id: string, checked: boolean) => void;
-  handleToggleAll: (checked: boolean) => void;
+  onToggleItem: (id: string, checked: boolean) => void;
+  onToggleAll: (checked: boolean) => void;
 };
 
 export default function CartList({
   cartItems,
-  handleIncrease,
-  handleDecrease,
-  handleDelete,
+  onIncrease,
+  onDecrease,
+  onDelete,
   isAllSelected,
-  handleToggleItem,
-  handleToggleAll,
+  onToggleItem,
+  onToggleAll,
 }: CartListProps) {
   return (
     <section
@@ -32,7 +32,7 @@ export default function CartList({
       <Checkbox
         checked={isAllSelected}
         label="전체선택"
-        onChange={handleToggleAll}
+        onChange={onToggleAll}
       />
       <ul
         css={{
@@ -46,10 +46,10 @@ export default function CartList({
             <CartItemCard
               key={cartItem.product.id}
               cartItem={cartItem}
-              handleIncrease={handleIncrease}
-              handleDecrease={handleDecrease}
-              handleDelete={handleDelete}
-              handleToggleItem={handleToggleItem}
+              onIncrease={onIncrease}
+              onDecrease={onDecrease}
+              onDelete={onDelete}
+              onToggleItem={onToggleItem}
             />
           );
         })}

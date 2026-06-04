@@ -10,9 +10,15 @@ import OrderSummary from './OrderSummary';
 
 type CartSectionProps = {
   cartItems: CartItem[];
+  handleIncrease: (id: string) => void;
+  handleDecrease: (id: string) => void;
 };
 
-export default function CartSection({ cartItems }: CartSectionProps) {
+export default function CartSection({
+  cartItems,
+  handleIncrease,
+  handleDecrease,
+}: CartSectionProps) {
   const orderAmount = calculateOrderAmount(cartItems);
   const deliveryFee = calculateDeliveryFee(orderAmount);
   const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
@@ -64,7 +70,11 @@ export default function CartSection({ cartItems }: CartSectionProps) {
           현재 {cartItems.length}종류의 상품이 담겨있습니다.
         </p>
       </div>
-      <CartList cartItems={cartItems} />
+      <CartList
+        cartItems={cartItems}
+        handleIncrease={handleIncrease}
+        handleDecrease={handleDecrease}
+      />
       <OrderSummary
         orderAmount={orderAmount}
         deliveryFee={deliveryFee}

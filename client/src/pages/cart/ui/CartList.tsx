@@ -4,9 +4,15 @@ import Checkbox from '../../../shared/ui/CheckBox';
 
 type CartListProps = {
   cartItems: CartItem[];
+  handleIncrease: (id: string) => void;
+  handleDecrease: (id: string) => void;
 };
 
-export default function CartList({ cartItems }: CartListProps) {
+export default function CartList({
+  cartItems,
+  handleIncrease,
+  handleDecrease,
+}: CartListProps) {
   return (
     <section
       css={{
@@ -23,8 +29,15 @@ export default function CartList({ cartItems }: CartListProps) {
           gap: '20px',
         }}
       >
-        {cartItems.map((cartItem, index) => {
-          return <CartItemCard key={index} cartItem={cartItem} />;
+        {cartItems.map((cartItem) => {
+          return (
+            <CartItemCard
+              key={cartItem.product.id}
+              cartItem={cartItem}
+              handleIncrease={handleIncrease}
+              handleDecrease={handleDecrease}
+            />
+          );
         })}
       </ul>
     </section>

@@ -5,6 +5,8 @@ import type { CartItem } from '../types';
 
 type CartItemCardProps = {
   cartItem: CartItem;
+  handleIncrease: (id: string) => void;
+  handleDecrease: (id: string) => void;
 };
 
 const quantityButtonStyle = {
@@ -18,7 +20,11 @@ const quantityButtonStyle = {
   padding: 0,
 };
 
-export default function CartItemCard({ cartItem }: CartItemCardProps) {
+export default function CartItemCard({
+  cartItem,
+  handleIncrease,
+  handleDecrease,
+}: CartItemCardProps) {
   return (
     <li
       css={{
@@ -104,7 +110,11 @@ export default function CartItemCard({ cartItem }: CartItemCardProps) {
             gap: '12px',
           }}
         >
-          <button type="button" css={quantityButtonStyle}>
+          <button
+            type="button"
+            css={quantityButtonStyle}
+            onClick={() => handleDecrease(cartItem.product.id)}
+          >
             -
           </button>
           <span
@@ -115,7 +125,11 @@ export default function CartItemCard({ cartItem }: CartItemCardProps) {
           >
             {cartItem.quantity}
           </span>
-          <button type="button" css={quantityButtonStyle}>
+          <button
+            type="button"
+            css={quantityButtonStyle}
+            onClick={() => handleIncrease(cartItem.product.id)}
+          >
             +
           </button>
         </div>

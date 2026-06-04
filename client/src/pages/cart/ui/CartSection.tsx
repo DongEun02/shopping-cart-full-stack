@@ -61,7 +61,7 @@ export default function CartSection({ cartItems }: CartSectionProps) {
             ...typography.label,
           }}
         >
-          현재 2종류의 상품이 담겨있습니다.
+          현재 {cartItems.length}종류의 상품이 담겨있습니다.
         </p>
       </div>
       <CartList cartItems={cartItems} />

@@ -71,7 +71,7 @@ export default function OrderSummary({
               ...typography.title,
             }}
           >
-            {orderAmount}원
+            {orderAmount.toLocaleString()}원
           </p>
         </div>
         <div css={summarySectionStyle}>
@@ -87,7 +87,7 @@ export default function OrderSummary({
               ...typography.title,
             }}
           >
-            {deliveryFee}원
+            {deliveryFee.toLocaleString()}원
           </p>
         </div>
       </div>

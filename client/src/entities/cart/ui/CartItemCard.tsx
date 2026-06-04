@@ -92,7 +92,7 @@ export default function CartItemCard({ cartItem }: CartItemCardProps) {
               color: colors.black,
             }}
           >
-            {cartItem.product.price}
+            {cartItem.product.price.toLocaleString()}원
           </p>
         </div>
 

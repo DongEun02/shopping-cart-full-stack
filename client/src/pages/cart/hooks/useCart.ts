@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 
 import type { CartItem } from '../../../entities/cart/types';
 import { useQuery } from '../../../shared/hooks/useQuery';
+import {
+  cartReducer,
+  type CartAction,
+} from '../../../entities/cart/cartReducer';
 
 type UseCartDependencies = {
   fetchItems: () => Promise<CartItem[]>;
@@ -18,7 +22,7 @@ export function useCart({
   loadSelectedItemIds,
   saveSelectedItems,
 }: UseCartDependencies) {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, dispatch] = useReducer(cartReducer, []);
 
   const {
     data: fetchedCartItems,
@@ -31,46 +35,31 @@ export function useCart({
   };
 
   const replaceCartItemQuantity = (id: string, quantity: number) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.product.id === id ? { ...item, quantity } : item,
-      ),
-    );
+    dispatch({ type: 'CHANGE_QUANTITY', id, quantity });
   };
 
   const removeCartItem = (id: string) => {
-    setCartItems((prev) => {
-      const nextCartItems = prev.filter((item) => item.product.id !== id);
+    const action: CartAction = { type: 'REMOVE_ITEM', id };
+    const nextCartItems = cartReducer(cartItems, action);
 
-      saveSelectedItems(nextCartItems);
-
-      return nextCartItems;
-    });
+    dispatch(action);
+    saveSelectedItems(nextCartItems);
   };
 
   const changeCartItemSelection = (id: string, checked: boolean) => {
-    setCartItems((prev) => {
-      const nextCartItems = prev.map((item) =>
-        item.product.id === id ? { ...item, isSelected: checked } : item,
-      );
+    const action: CartAction = { type: 'CHANGE_ITEM_SELECTION', id, checked };
+    const nextCartItems = cartReducer(cartItems, action);
 
-      saveSelectedItems(nextCartItems);
-
-      return nextCartItems;
-    });
+    dispatch(action);
+    saveSelectedItems(nextCartItems);
   };
 
   const changeAllCartItemsSelection = (checked: boolean) => {
-    setCartItems((prev) => {
-      const nextCartItems = prev.map((item) => ({
-        ...item,
-        isSelected: checked,
-      }));
+    const action: CartAction = { type: 'CHANGE_ALL_SELECTION', checked };
+    const nextCartItems = cartReducer(cartItems, action);
 
-      saveSelectedItems(nextCartItems);
-
-      return nextCartItems;
-    });
+    dispatch(action);
+    saveSelectedItems(nextCartItems);
   };
 
   const increaseQuantity = async (id: string) => {
@@ -128,14 +117,15 @@ export function useCart({
     function syncCartItems() {
       const selectedCartItemIds = loadSelectedItemIds();
 
-      setCartItems(
-        cartItems.map((item) => ({
+      dispatch({
+        type: 'SET_ITEMS',
+        items: cartItems.map((item) => ({
           ...item,
           isSelected: selectedCartItemIds
             ? selectedCartItemIds.includes(item.product.id)
             : true,
         })),
-      );
+      });
     }
 
     syncCartItems();

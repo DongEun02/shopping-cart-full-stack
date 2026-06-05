@@ -107,6 +107,38 @@ describe('CartPage', () => {
     expect(screen.getByText('상품이름B')).toBeInTheDocument();
   });
 
+  test('상품 삭제 실패 시 에러 메시지를 alert로 보여준다.', async () => {
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+    try {
+      server.use(
+        http.delete('/carts/:id', () => {
+          return HttpResponse.json(null, { status: 500 });
+        }),
+      );
+
+      renderCartPage();
+
+      const firstItem = await screen.findByText('상품이름A');
+      const firstCartItem = firstItem.closest('li');
+
+      expect(firstCartItem).not.toBeNull();
+
+      fireEvent.click(
+        within(firstCartItem as HTMLElement).getByRole('button', {
+          name: '삭제',
+        }),
+      );
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith('상품을 삭제하지 못했습니다.');
+      });
+      expect(screen.getByText('상품이름A')).toBeInTheDocument();
+    } finally {
+      alertSpy.mockRestore();
+    }
+  });
+
   test('선택된 상품이 없으면 주문 확인 버튼이 비활성화된다.', async () => {
     renderCartPage();
 

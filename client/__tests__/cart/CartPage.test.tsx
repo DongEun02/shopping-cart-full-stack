@@ -106,4 +106,36 @@ describe('CartPage', () => {
     });
     expect(screen.getByText('상품이름B')).toBeInTheDocument();
   });
+
+  test('선택된 상품이 없으면 주문 확인 버튼이 비활성화된다.', async () => {
+    renderCartPage();
+
+    const selectAllCheckbox = await screen.findByRole('checkbox', {
+      name: '전체선택',
+    });
+
+    fireEvent.click(selectAllCheckbox);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: '주문 확인' })).toBeDisabled();
+    });
+  });
+
+  test('선택된 상품이 있으면 주문 확인 버튼이 활성화된다.', async () => {
+    renderCartPage();
+
+    const selectAllCheckbox = await screen.findByRole('checkbox', {
+      name: '전체선택',
+    });
+    fireEvent.click(selectAllCheckbox);
+
+    const firstItem = await screen.findByText('상품이름A');
+    const firstCartItem = firstItem.closest('li');
+
+    fireEvent.click(within(firstCartItem).getByRole('checkbox'));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: '주문 확인' })).toBeEnabled();
+    });
+  });
 });

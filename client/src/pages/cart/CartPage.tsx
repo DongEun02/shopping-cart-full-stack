@@ -19,6 +19,10 @@ import {
   calculateOrderAmount,
   calculateTotalAmount,
 } from '../../entities/cart/calculate';
+import {
+  getSelectedCartItems,
+  isAllCartItemsSelected,
+} from '../../entities/cart/selector';
 import { useCart } from './hooks/useCart';
 
 import { useNavigate } from 'react-router-dom';
@@ -43,12 +47,11 @@ export default function CartPage() {
     saveSelectedItemIds: saveSelectedCartItemIds,
   });
 
-  const selectedItems = cartItems.filter((item) => item.isSelected);
+  const selectedItems = getSelectedCartItems(cartItems);
   const orderAmount = calculateOrderAmount(selectedItems);
   const deliveryFee = calculateDeliveryFee(orderAmount);
   const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
-  const isAllSelected =
-    cartItems.length > 0 && cartItems.every((item) => item.isSelected);
+  const isAllSelected = isAllCartItemsSelected(cartItems);
 
   const type = selectedItems.length === 0 ? 'inactive' : 'active';
 

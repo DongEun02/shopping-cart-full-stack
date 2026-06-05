@@ -25,6 +25,7 @@ import {
 } from '../../entities/cart/selector';
 import { useCart } from './hooks/useCart';
 
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
@@ -34,6 +35,7 @@ export default function CartPage() {
     cartItems,
     isLoading,
     error,
+    mutationError,
     increaseQuantity,
     decreaseQuantity,
     removeCartItem,
@@ -54,6 +56,12 @@ export default function CartPage() {
   const isAllSelected = isAllCartItemsSelected(cartItems);
 
   const type = selectedItems.length === 0 ? 'inactive' : 'active';
+
+  useEffect(() => {
+    if (!mutationError) return;
+
+    alert(mutationError.message);
+  }, [mutationError]);
 
   if (isLoading) {
     return (

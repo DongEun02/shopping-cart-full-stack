@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useEffectEvent } from 'react';
 
 import type { CartItem } from '../../../entities/cart/types';
+import { useMutation } from '../../../shared/hooks/useMutation';
 import { useQuery } from '../../../shared/hooks/useQuery';
 import {
   cartReducer,
@@ -34,6 +35,8 @@ export function useCart({
     isLoading,
     error,
   } = useQuery('cartItems', fetchItems);
+
+  const { mutate, error: mutationError } = useMutation();
 
   const findCartItem = (id: string) => {
     return cartItems.find((item) => item.product.id === id);
@@ -77,12 +80,10 @@ export function useCart({
     );
 
     try {
-      await updateItemQuantity(id, nextQuantity);
+      await mutate(() => updateItemQuantity(id, nextQuantity));
       replaceCartItemQuantity(id, nextQuantity);
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
+    } catch {
+      return;
     }
   };
 
@@ -96,12 +97,10 @@ export function useCart({
     );
 
     try {
-      await updateItemQuantity(id, nextQuantity);
+      await mutate(() => updateItemQuantity(id, nextQuantity));
       replaceCartItemQuantity(id, nextQuantity);
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
+    } catch {
+      return;
     }
   };
 
@@ -110,12 +109,10 @@ export function useCart({
     if (!currentItem) return;
 
     try {
-      await removeItem(id);
+      await mutate(() => removeItem(id));
       removeCartItem(id);
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
+    } catch {
+      return;
     }
   };
 
@@ -143,6 +140,7 @@ export function useCart({
     cartItems,
     isLoading,
     error,
+    mutationError,
     increaseQuantity,
     decreaseQuantity,
     removeCartItem: removeCartItemById,

@@ -1,32 +1,15 @@
+import type { ReactNode } from 'react';
 import type { CartItem } from '../../../entities/cart/types';
 import { colors, typography } from '../../../shared/styles/theme';
-import CartList from './CartList';
-import OrderSummary from './OrderSummary';
 
 type CartSectionProps = {
   cartItems: CartItem[];
-  onIncrease: (id: string) => Promise<void>;
-  onDecrease: (id: string) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
-  isAllSelected: boolean;
-  onToggleItem: (id: string, checked: boolean) => void;
-  onToggleAll: (checked: boolean) => void;
-  orderAmount: number;
-  deliveryFee: number;
-  totalAmount: number;
+  children: ReactNode;
 };
 
 export default function CartSection({
   cartItems,
-  onIncrease,
-  onDecrease,
-  onDelete,
-  isAllSelected,
-  onToggleItem,
-  onToggleAll,
-  orderAmount,
-  deliveryFee,
-  totalAmount,
+  children,
 }: CartSectionProps) {
   // 상품이 없는 경우
   if (cartItems.length === 0) {
@@ -75,20 +58,7 @@ export default function CartSection({
           현재 {cartItems.length}종류의 상품이 담겨있습니다.
         </p>
       </div>
-      <CartList
-        cartItems={cartItems}
-        onIncrease={onIncrease}
-        onDecrease={onDecrease}
-        onDelete={onDelete}
-        isAllSelected={isAllSelected}
-        onToggleItem={onToggleItem}
-        onToggleAll={onToggleAll}
-      />
-      <OrderSummary
-        orderAmount={orderAmount}
-        deliveryFee={deliveryFee}
-        totalAmount={totalAmount}
-      />
+      {children}
     </section>
   );
 }

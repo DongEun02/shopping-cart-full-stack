@@ -2,7 +2,9 @@ import { colors, typography } from '../../shared/styles/theme';
 import Button from '../../shared/ui/Button';
 import Header from '../../shared/ui/Header';
 import Spinner from '../../shared/ui/Spinner';
+import CartList from './ui/CartList';
 import CartSection from './ui/CartSection';
+import OrderSummary from './ui/OrderSummary';
 import {
   deleteCartItem,
   updateCartItemQuantity,
@@ -107,18 +109,22 @@ export default function CartPage() {
       }}
     >
       <Header page="cart" />
-      <CartSection
-        cartItems={cartItems}
-        onIncrease={increaseQuantity}
-        onDecrease={decreaseQuantity}
-        onDelete={removeCartItem}
-        isAllSelected={isAllSelected}
-        onToggleItem={changeCartItemSelection}
-        onToggleAll={changeAllCartItemsSelection}
-        orderAmount={orderAmount}
-        deliveryFee={deliveryFee}
-        totalAmount={totalAmount}
-      />
+      <CartSection cartItems={cartItems}>
+        <CartList
+          cartItems={cartItems}
+          onIncrease={increaseQuantity}
+          onDecrease={decreaseQuantity}
+          onDelete={removeCartItem}
+          isAllSelected={isAllSelected}
+          onToggleItem={changeCartItemSelection}
+          onToggleAll={changeAllCartItemsSelection}
+        />
+        <OrderSummary
+          orderAmount={orderAmount}
+          deliveryFee={deliveryFee}
+          totalAmount={totalAmount}
+        />
+      </CartSection>
       <Button
         type={type}
         text="주문 확인"

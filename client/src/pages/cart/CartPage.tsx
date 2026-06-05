@@ -48,7 +48,7 @@ export default function CartPage() {
   const isAllSelected =
     cartItems.length > 0 && cartItems.every((item) => item.isSelected);
 
-  const type = cartItems.length === 0 ? 'inactive' : 'active';
+  const type = selectedItems.length === 0 ? 'inactive' : 'active';
 
   if (isLoading) {
     return (

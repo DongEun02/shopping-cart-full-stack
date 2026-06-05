@@ -109,7 +109,7 @@ export default function CartPage() {
       }}
     >
       <Header page="cart" />
-      <CartSection cartItems={cartItems}>
+      <CartSection cartItemsCount={cartItems.length}>
         <CartList
           cartItems={cartItems}
           onIncrease={increaseQuantity}

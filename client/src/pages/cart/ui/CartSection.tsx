@@ -1,18 +1,17 @@
 import type { ReactNode } from 'react';
-import type { CartItem } from '../../../entities/cart/types';
 import { colors, typography } from '../../../shared/styles/theme';
 
 type CartSectionProps = {
-  cartItems: CartItem[];
+  cartItemsCount: number;
   children: ReactNode;
 };
 
 export default function CartSection({
-  cartItems,
+  cartItemsCount,
   children,
 }: CartSectionProps) {
   // 상품이 없는 경우
-  if (cartItems.length === 0) {
+  if (cartItemsCount === 0) {
     return (
       <p
         css={{
@@ -55,7 +54,7 @@ export default function CartSection({
             ...typography.label,
           }}
         >
-          현재 {cartItems.length}종류의 상품이 담겨있습니다.
+          현재 {cartItemsCount}종류의 상품이 담겨있습니다.
         </p>
       </div>
       {children}

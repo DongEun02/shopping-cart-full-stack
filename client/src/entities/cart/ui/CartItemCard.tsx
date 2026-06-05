@@ -1,4 +1,3 @@
-// entities/cart/ui/CartItem.tsx
 import CheckBox from '../../../shared/ui/CheckBox';
 import { colors, typography } from '../../../shared/styles/theme';
 import type { CartItem } from '../types';

@@ -6,6 +6,10 @@ import {
   cartReducer,
   type CartAction,
 } from '../../../entities/cart/cartReducer';
+import {
+  MAX_CART_ITEM_QUANTITY,
+  MIN_CART_ITEM_QUANTITY,
+} from '../../../entities/cart/constants';
 import { getSelectedItemIds } from '../../../entities/cart/selector';
 
 type UseCartDependencies = {
@@ -67,7 +71,10 @@ export function useCart({
     const currentItem = findCartItem(id);
     if (!currentItem) return;
 
-    const nextQuantity = Math.min(99, currentItem.quantity + 1);
+    const nextQuantity = Math.min(
+      MAX_CART_ITEM_QUANTITY,
+      currentItem.quantity + 1,
+    );
 
     try {
       await updateItemQuantity(id, nextQuantity);
@@ -83,7 +90,10 @@ export function useCart({
     const currentItem = findCartItem(id);
     if (!currentItem) return;
 
-    const nextQuantity = Math.max(1, currentItem.quantity - 1);
+    const nextQuantity = Math.max(
+      MIN_CART_ITEM_QUANTITY,
+      currentItem.quantity - 1,
+    );
 
     try {
       await updateItemQuantity(id, nextQuantity);

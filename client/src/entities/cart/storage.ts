@@ -1,5 +1,3 @@
-import type { CartItem } from './types';
-
 const SELECTED_CART_ITEM_IDS = 'selectedCartItemIds';
 
 export function getSelectedCartItemIds(): string[] | null {
@@ -14,11 +12,7 @@ export function getSelectedCartItemIds(): string[] | null {
   }
 }
 
-export function saveSelectedCartItemIds(cartItems: CartItem[]) {
-  const selectedCartItemIds = cartItems
-    .filter((item) => item.isSelected)
-    .map((item) => item.product.id);
-
+export function saveSelectedCartItemIds(selectedCartItemIds: string[]) {
   localStorage.setItem(
     SELECTED_CART_ITEM_IDS,
     JSON.stringify(selectedCartItemIds),

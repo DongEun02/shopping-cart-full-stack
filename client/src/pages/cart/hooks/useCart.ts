@@ -6,13 +6,14 @@ import {
   cartReducer,
   type CartAction,
 } from '../../../entities/cart/cartReducer';
+import { getSelectedItemIds } from '../../../entities/cart/selector';
 
 type UseCartDependencies = {
   fetchItems: () => Promise<CartItem[]>;
   updateItemQuantity: (id: string, quantity: number) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   loadSelectedItemIds: () => string[] | null;
-  saveSelectedItems: (cartItems: CartItem[]) => void;
+  saveSelectedItemIds: (ids: string[]) => void;
 };
 
 export function useCart({
@@ -20,7 +21,7 @@ export function useCart({
   updateItemQuantity,
   removeItem,
   loadSelectedItemIds,
-  saveSelectedItems,
+  saveSelectedItemIds,
 }: UseCartDependencies) {
   const [cartItems, dispatch] = useReducer(cartReducer, []);
 
@@ -43,7 +44,7 @@ export function useCart({
     const nextCartItems = cartReducer(cartItems, action);
 
     dispatch(action);
-    saveSelectedItems(nextCartItems);
+    saveSelectedItemIds(getSelectedItemIds(nextCartItems));
   };
 
   const changeCartItemSelection = (id: string, checked: boolean) => {
@@ -51,7 +52,7 @@ export function useCart({
     const nextCartItems = cartReducer(cartItems, action);
 
     dispatch(action);
-    saveSelectedItems(nextCartItems);
+    saveSelectedItemIds(getSelectedItemIds(nextCartItems));
   };
 
   const changeAllCartItemsSelection = (checked: boolean) => {
@@ -59,7 +60,7 @@ export function useCart({
     const nextCartItems = cartReducer(cartItems, action);
 
     dispatch(action);
-    saveSelectedItems(nextCartItems);
+    saveSelectedItemIds(getSelectedItemIds(nextCartItems));
   };
 
   const increaseQuantity = async (id: string) => {
@@ -100,13 +101,12 @@ export function useCart({
 
     try {
       await removeItem(id);
+      removeCartItem(id);
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);
       }
     }
-
-    removeCartItem(id);
   };
 
   const loadSelectedIds = useEffectEvent(() => {

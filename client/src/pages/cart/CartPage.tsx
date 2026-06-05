@@ -40,7 +40,7 @@ export default function CartPage() {
     updateItemQuantity: updateCartItemQuantity,
     removeItem: deleteCartItem,
     loadSelectedItemIds: getSelectedCartItemIds,
-    saveSelectedItems: saveSelectedCartItemIds,
+    saveSelectedItemIds: saveSelectedCartItemIds,
   });
 
   const selectedItems = cartItems.filter((item) => item.isSelected);

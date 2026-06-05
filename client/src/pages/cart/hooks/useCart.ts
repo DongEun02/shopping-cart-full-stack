@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useEffectEvent } from 'react';
 
 import type { CartItem } from '../../../entities/cart/types';
 import { useQuery } from '../../../shared/hooks/useQuery';
@@ -109,27 +109,25 @@ export function useCart({
     removeCartItem(id);
   };
 
+  const loadSelectedIds = useEffectEvent(() => {
+    return loadSelectedItemIds();
+  });
+
   useEffect(() => {
     if (!fetchedCartItems) return;
 
-    const cartItems = fetchedCartItems;
+    const selectedCartItemIds = loadSelectedIds();
 
-    function syncCartItems() {
-      const selectedCartItemIds = loadSelectedItemIds();
-
-      dispatch({
-        type: 'SET_ITEMS',
-        items: cartItems.map((item) => ({
-          ...item,
-          isSelected: selectedCartItemIds
-            ? selectedCartItemIds.includes(item.product.id)
-            : true,
-        })),
-      });
-    }
-
-    syncCartItems();
-  }, [fetchedCartItems, loadSelectedItemIds]);
+    dispatch({
+      type: 'SET_ITEMS',
+      items: fetchedCartItems.map((item) => ({
+        ...item,
+        isSelected: selectedCartItemIds
+          ? selectedCartItemIds.includes(item.product.id)
+          : true,
+      })),
+    });
+  }, [fetchedCartItems]);
 
   return {
     cartItems,

@@ -132,7 +132,7 @@ describe('CartPage', () => {
     const firstItem = await screen.findByText('상품이름A');
     const firstCartItem = firstItem.closest('li');
 
-    fireEvent.click(within(firstCartItem).getByRole('checkbox'));
+    fireEvent.click(within(firstCartItem as HTMLElement).getByRole('checkbox'));
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '주문 확인' })).toBeEnabled();

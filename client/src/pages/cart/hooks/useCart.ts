@@ -73,7 +73,7 @@ export function useCart({
       replaceCartItemQuantity(id, nextQuantity);
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        alert(error.message);
       }
     }
   };
@@ -89,7 +89,7 @@ export function useCart({
       replaceCartItemQuantity(id, nextQuantity);
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        alert(error.message);
       }
     }
   };
@@ -102,7 +102,7 @@ export function useCart({
       await removeItem(id);
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        alert(error.message);
       }
     }
 

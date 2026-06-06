@@ -80,9 +80,10 @@ export function useCart({
     );
 
     try {
-      await mutate(() => updateItemQuantity(id, nextQuantity));
       replaceCartItemQuantity(id, nextQuantity);
+      await mutate(() => updateItemQuantity(id, nextQuantity));
     } catch {
+      replaceCartItemQuantity(id, currentItem.quantity);
       return;
     }
   };
@@ -97,9 +98,10 @@ export function useCart({
     );
 
     try {
-      await mutate(() => updateItemQuantity(id, nextQuantity));
       replaceCartItemQuantity(id, nextQuantity);
+      await mutate(() => updateItemQuantity(id, nextQuantity));
     } catch {
+      replaceCartItemQuantity(id, currentItem.quantity);
       return;
     }
   };

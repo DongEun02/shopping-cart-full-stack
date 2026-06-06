@@ -90,3 +90,10 @@ export function useQuery<T>(
     error: state.error,
   };
 }
+
+export function setQueryData<T>(queryKey: string, updateFn: (data: T) => T) {
+  const cachedData = cache.get(queryKey) as T | undefined;
+  if (!cachedData) return;
+
+  cache.set(queryKey, updateFn(cachedData));
+}

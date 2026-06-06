@@ -2,7 +2,7 @@ import { useEffect, useReducer, useEffectEvent } from 'react';
 
 import type { CartItem } from '../../../entities/cart/types';
 import { useMutation } from '../../../shared/hooks/useMutation';
-import { useQuery } from '../../../shared/hooks/useQuery';
+import { useQuery, setQueryData } from '../../../shared/hooks/useQuery';
 import {
   cartReducer,
   type CartAction,
@@ -80,6 +80,14 @@ export function useCart({
     try {
       replaceCartItemQuantity(id, nextQuantity);
       await mutate(() => updateItemQuantity(id, nextQuantity));
+
+      setQueryData<CartItem[]>('cartItems', (items) =>
+        cartReducer(items, {
+          type: 'CHANGE_QUANTITY',
+          id,
+          quantity: nextQuantity,
+        }),
+      );
     } catch {
       replaceCartItemQuantity(id, currentItem.quantity);
       return;
@@ -98,6 +106,14 @@ export function useCart({
     try {
       replaceCartItemQuantity(id, nextQuantity);
       await mutate(() => updateItemQuantity(id, nextQuantity));
+
+      setQueryData<CartItem[]>('cartItems', (items) =>
+        cartReducer(items, {
+          type: 'CHANGE_QUANTITY',
+          id,
+          quantity: nextQuantity,
+        }),
+      );
     } catch {
       replaceCartItemQuantity(id, currentItem.quantity);
       return;
@@ -111,6 +127,13 @@ export function useCart({
     try {
       await mutate(() => removeItem(id));
       removeCartItem(id);
+
+      setQueryData<CartItem[]>('cartItems', (items) =>
+        cartReducer(items, {
+          type: 'REMOVE_ITEM',
+          id,
+        }),
+      );
     } catch {
       return;
     }

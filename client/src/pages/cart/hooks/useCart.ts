@@ -42,32 +42,30 @@ export function useCart({
     return cartItems.find((item) => item.product.id === id);
   };
 
+  const dispatchCartAction = (action: CartAction) => {
+    const nextCartItems = cartReducer(cartItems, action);
+
+    dispatch(action);
+    saveSelectedItemIds(getSelectedItemIds(nextCartItems));
+  };
+
   const replaceCartItemQuantity = (id: string, quantity: number) => {
     dispatch({ type: 'CHANGE_QUANTITY', id, quantity });
   };
 
   const removeCartItem = (id: string) => {
     const action: CartAction = { type: 'REMOVE_ITEM', id };
-    const nextCartItems = cartReducer(cartItems, action);
-
-    dispatch(action);
-    saveSelectedItemIds(getSelectedItemIds(nextCartItems));
+    dispatchCartAction(action);
   };
 
   const changeCartItemSelection = (id: string, checked: boolean) => {
     const action: CartAction = { type: 'CHANGE_ITEM_SELECTION', id, checked };
-    const nextCartItems = cartReducer(cartItems, action);
-
-    dispatch(action);
-    saveSelectedItemIds(getSelectedItemIds(nextCartItems));
+    dispatchCartAction(action);
   };
 
   const changeAllCartItemsSelection = (checked: boolean) => {
     const action: CartAction = { type: 'CHANGE_ALL_SELECTION', checked };
-    const nextCartItems = cartReducer(cartItems, action);
-
-    dispatch(action);
-    saveSelectedItemIds(getSelectedItemIds(nextCartItems));
+    dispatchCartAction(action);
   };
 
   const increaseQuantity = async (id: string) => {

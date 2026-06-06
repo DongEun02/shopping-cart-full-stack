@@ -36,7 +36,7 @@ export function useCart({
     error,
   } = useQuery('cartItems', fetchItems);
 
-  const { mutate, error: mutationError } = useMutation();
+  const { mutate, isMutationLoading, error: mutationError } = useMutation();
 
   const findCartItem = (id: string) => {
     return cartItems.find((item) => item.product.id === id);
@@ -72,6 +72,8 @@ export function useCart({
     const currentItem = findCartItem(id);
     if (!currentItem) return;
 
+    if (isMutationLoading) return;
+
     const nextQuantity = Math.min(
       MAX_CART_ITEM_QUANTITY,
       currentItem.quantity + 1,
@@ -97,6 +99,8 @@ export function useCart({
   const decreaseQuantity = async (id: string) => {
     const currentItem = findCartItem(id);
     if (!currentItem) return;
+
+    if (isMutationLoading) return;
 
     const nextQuantity = Math.max(
       MIN_CART_ITEM_QUANTITY,

@@ -97,3 +97,7 @@ export function setQueryData<T>(queryKey: string, updateFn: (data: T) => T) {
 
   cache.set(queryKey, updateFn(cachedData));
 }
+
+export function clearQueryCache() {
+  cache.clear();
+}

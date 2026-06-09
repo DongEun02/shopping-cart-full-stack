@@ -1,13 +1,30 @@
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { saveSelectedCartItemIds } from '../../src/entities/cart/storage';
+import {
+  getSelectedCartItemIds,
+  saveSelectedCartItemIds,
+} from '../../src/entities/cart/storage';
+import {
+  deleteCartItem,
+  fetchCartItems,
+  updateCartItemQuantity,
+} from '../../src/entities/cart/api/cartApi';
 import CartPage from '../../src/pages/cart/CartPage';
+import CartProvider from '../../src/pages/cart/providers/CartProvider';
 
 function renderCartPage() {
   return render(
     <MemoryRouter>
-      <CartPage />
+      <CartProvider
+        fetchItems={fetchCartItems}
+        updateItemQuantity={updateCartItemQuantity}
+        removeItem={deleteCartItem}
+        loadSelectedItemIds={getSelectedCartItemIds}
+        saveSelectedItemIds={saveSelectedCartItemIds}
+      >
+        <CartPage />
+      </CartProvider>
     </MemoryRouter>,
   );
 }

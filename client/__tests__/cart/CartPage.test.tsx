@@ -8,14 +8,32 @@ import {
 import { http, HttpResponse, delay } from 'msw';
 import { MemoryRouter } from 'react-router-dom';
 
+import {
+  deleteCartItem,
+  fetchCartItems,
+  updateCartItemQuantity,
+} from '../../src/entities/cart/api/cartApi';
+import {
+  getSelectedCartItemIds,
+  saveSelectedCartItemIds,
+} from '../../src/entities/cart/storage';
 import CartPage from '../../src/pages/cart/CartPage';
+import CartProvider from '../../src/pages/cart/providers/CartProvider';
 import { mockCartItems } from '../../src/mocks/handlers';
 import { server } from '../../src/mocks/server';
 
 function renderCartPage() {
   return render(
     <MemoryRouter>
-      <CartPage />
+      <CartProvider
+        fetchItems={fetchCartItems}
+        updateItemQuantity={updateCartItemQuantity}
+        removeItem={deleteCartItem}
+        loadSelectedItemIds={getSelectedCartItemIds}
+        saveSelectedItemIds={saveSelectedCartItemIds}
+      >
+        <CartPage />
+      </CartProvider>
     </MemoryRouter>,
   );
 }

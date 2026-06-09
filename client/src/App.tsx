@@ -2,7 +2,7 @@ import { Global } from '@emotion/react';
 import { globalStyles } from './shared/styles/global';
 import { Routes, Route } from 'react-router-dom';
 
-import CartPage from './pages/cart/CartPage';
+import CartRoute from './pages/cart/CartRoute';
 import CheckoutPage from './pages/checkout/CheckoutPage';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
     <>
       <Global styles={globalStyles} />
       <Routes>
-        <Route path="/" element={<CartPage />} />
+        <Route path="/" element={<CartRoute />} />
         <Route path="/checkout" element={<CheckoutPage />} />
       </Routes>
     </>

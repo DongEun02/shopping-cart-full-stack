@@ -1,26 +1,23 @@
+import { isAllCartItemsSelected } from '../../../entities/cart/selector';
 import type { CartItem } from '../../../entities/cart/types';
 import CartItemCard from '../../../entities/cart/ui/CartItemCard';
 import Checkbox from '../../../shared/ui/CheckBox';
+import { useCartItemActions } from '../hooks/useCartItemActions';
+import { useCartQuantityActions } from '../hooks/useCartQuantityActions';
+import { useCartSelectionActions } from '../hooks/useCartSelectionActions';
 
 type CartListProps = {
   cartItems: CartItem[];
-  onIncrease: (id: string) => Promise<void>;
-  onDecrease: (id: string) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
-  isAllSelected: boolean;
-  onToggleItem: (id: string, checked: boolean) => void;
-  onToggleAll: (checked: boolean) => void;
 };
 
-export default function CartList({
-  cartItems,
-  onIncrease,
-  onDecrease,
-  onDelete,
-  isAllSelected,
-  onToggleItem,
-  onToggleAll,
-}: CartListProps) {
+export default function CartList({ cartItems }: CartListProps) {
+  const { increaseQuantity, decreaseQuantity } = useCartQuantityActions();
+  const { removeCartItem } = useCartItemActions();
+  const { changeCartItemSelection, changeAllCartItemsSelection } =
+    useCartSelectionActions();
+
+  const isAllSelected = isAllCartItemsSelected(cartItems);
+
   return (
     <section
       css={{
@@ -32,7 +29,7 @@ export default function CartList({
       <Checkbox
         checked={isAllSelected}
         label="전체선택"
-        onChange={onToggleAll}
+        onChange={changeAllCartItemsSelection}
       />
       <ul
         css={{
@@ -46,10 +43,10 @@ export default function CartList({
             <CartItemCard
               key={cartItem.product.id}
               cartItem={cartItem}
-              onIncrease={onIncrease}
-              onDecrease={onDecrease}
-              onDelete={onDelete}
-              onToggleItem={onToggleItem}
+              onIncrease={increaseQuantity}
+              onDecrease={decreaseQuantity}
+              onDelete={removeCartItem}
+              onToggleItem={changeCartItemSelection}
             />
           );
         })}

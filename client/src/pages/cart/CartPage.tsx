@@ -1,19 +1,6 @@
-import { colors, typography } from '../../shared/styles/theme';
-import Button from '../../shared/ui/Button';
-import Header from '../../shared/ui/Header';
-import Spinner from '../../shared/ui/Spinner';
-import CartList from './ui/CartList';
-import CartSection from './ui/CartSection';
-import OrderSummary from './ui/OrderSummary';
-import {
-  deleteCartItem,
-  updateCartItemQuantity,
-  fetchCartItems,
-} from '../../entities/cart/api/cartApi';
-import {
-  getSelectedCartItemIds,
-  saveSelectedCartItemIds,
-} from '../../entities/cart/storage';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import {
   calculateDeliveryFee,
   calculateOrderAmount,
@@ -21,39 +8,27 @@ import {
 } from '../../entities/cart/calculate';
 import {
   getSelectedCartItems,
-  isAllCartItemsSelected,
 } from '../../entities/cart/selector';
-import { useCart } from './hooks/useCart';
-
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { colors, typography } from '../../shared/styles/theme';
+import Button from '../../shared/ui/Button';
+import Header from '../../shared/ui/Header';
+import Spinner from '../../shared/ui/Spinner';
+import { useCartItems } from './hooks/useCartItems';
+import { useCartMutationError } from './hooks/useCartMutationError';
+import CartList from './ui/CartList';
+import CartSection from './ui/CartSection';
+import OrderSummary from './ui/OrderSummary';
 
 export default function CartPage() {
   const navigate = useNavigate();
 
-  const {
-    cartItems,
-    isLoading,
-    error,
-    mutationError,
-    increaseQuantity,
-    decreaseQuantity,
-    removeCartItem,
-    changeCartItemSelection,
-    changeAllCartItemsSelection,
-  } = useCart({
-    fetchItems: fetchCartItems,
-    updateItemQuantity: updateCartItemQuantity,
-    removeItem: deleteCartItem,
-    loadSelectedItemIds: getSelectedCartItemIds,
-    saveSelectedItemIds: saveSelectedCartItemIds,
-  });
+  const { cartItems, isLoading, error } = useCartItems();
+  const mutationError = useCartMutationError();
 
   const selectedItems = getSelectedCartItems(cartItems);
   const orderAmount = calculateOrderAmount(selectedItems);
   const deliveryFee = calculateDeliveryFee(orderAmount);
   const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
-  const isAllSelected = isAllCartItemsSelected(cartItems);
 
   const type = selectedItems.length === 0 ? 'inactive' : 'active';
 
@@ -121,15 +96,7 @@ export default function CartPage() {
     >
       <Header page="cart" />
       <CartSection cartItemsCount={cartItems.length}>
-        <CartList
-          cartItems={cartItems}
-          onIncrease={increaseQuantity}
-          onDecrease={decreaseQuantity}
-          onDelete={removeCartItem}
-          isAllSelected={isAllSelected}
-          onToggleItem={changeCartItemSelection}
-          onToggleAll={changeAllCartItemsSelection}
-        />
+        <CartList cartItems={cartItems} />
         <OrderSummary
           orderAmount={orderAmount}
           deliveryFee={deliveryFee}

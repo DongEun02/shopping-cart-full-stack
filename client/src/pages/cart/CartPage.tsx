@@ -1,0 +1,120 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import {
+  calculateDeliveryFee,
+  calculateOrderAmount,
+  calculateTotalAmount,
+} from '../../entities/cart/calculate';
+import {
+  getSelectedCartItems,
+} from '../../entities/cart/selector';
+import { colors, typography } from '../../shared/styles/theme';
+import Button from '../../shared/ui/Button';
+import Header from '../../shared/ui/Header';
+import Spinner from '../../shared/ui/Spinner';
+import { useCartItems } from './hooks/useCartItems';
+import { useCartMutationError } from './hooks/useCartMutationError';
+import CartList from './ui/CartList';
+import CartSection from './ui/CartSection';
+import OrderSummary from './ui/OrderSummary';
+
+export default function CartPage() {
+  const navigate = useNavigate();
+
+  const { cartItems, isLoading, error } = useCartItems();
+  const mutationError = useCartMutationError();
+
+  const selectedItems = getSelectedCartItems(cartItems);
+  const orderAmount = calculateOrderAmount(selectedItems);
+  const deliveryFee = calculateDeliveryFee(orderAmount);
+  const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
+
+  const type = selectedItems.length === 0 ? 'inactive' : 'active';
+
+  useEffect(() => {
+    if (!mutationError) return;
+
+    alert(mutationError.message);
+  }, [mutationError]);
+
+  if (isLoading) {
+    return (
+      <div
+        css={{
+          backgroundColor: colors.white,
+          width: '430px',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto',
+        }}
+      >
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div
+        css={{
+          backgroundColor: colors.white,
+          width: '430px',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto',
+        }}
+      >
+        <p
+          css={{
+            ...typography.label,
+            color: 'red',
+          }}
+        >
+          {error.message}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      css={{
+        backgroundColor: colors.white,
+        width: '430px',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        margin: '0 auto',
+        alignItems: 'center',
+        gap: '36px',
+      }}
+    >
+      <Header page="cart" />
+      <CartSection cartItemsCount={cartItems.length}>
+        <CartList cartItems={cartItems} />
+        <OrderSummary
+          orderAmount={orderAmount}
+          deliveryFee={deliveryFee}
+          totalAmount={totalAmount}
+        />
+      </CartSection>
+      <Button
+        type={type}
+        text="주문 확인"
+        onClick={() =>
+          navigate('checkout', {
+            state: {
+              cartItems: selectedItems,
+              totalAmount,
+            },
+          })
+        }
+      />
+    </div>
+  );
+}

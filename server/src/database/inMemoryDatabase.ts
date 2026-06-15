@@ -1,9 +1,49 @@
 import Product from '../domain/Product.ts';
 import ShoppingCart from '../domain/ShoppingCart.ts';
-import type { ProductId } from '../types/type.ts';
+import type { ProductId, CouponWithState } from '../types/type.ts';
 
 export const products = new Map<ProductId, Product>();
 export const shoppingCart = new ShoppingCart();
+export const coupons: CouponWithState[] = [
+  {
+    code: 'FIXED5000',
+    name: '5,000원 할인 쿠폰',
+    expiresAt: '2026-11-30',
+    minOrderAmount: 100000,
+    discountAmount: 5000,
+    isSelected: false,
+    isDisabled: false,
+  },
+  {
+    code: 'BOGO',
+    name: '2개 구매 시 1개 무료 쿠폰',
+    expiresAt: '2026-06-30',
+    minCount: 3,
+    freeCount: 1,
+    isSelected: false,
+    isDisabled: false,
+  },
+  {
+    code: 'FREESHIPPING',
+    name: '5만원 이상 구매 시 무료 배송 쿠폰',
+    expiresAt: '2026-08-31',
+    minOrderAmount: 50000,
+    discountAmount: 3000,
+    remoteAreaFee: 3000,
+    isSelected: false,
+    isDisabled: false,
+  },
+  {
+    code: 'MIRACLESALE',
+    name: '미라클모닝 30% 할인 쿠폰',
+    expiresAt: '2026-07-31',
+    discountRate: 30,
+    startTime: '04:00',
+    endTime: '07:00',
+    isSelected: false,
+    isDisabled: false,
+  },
+];
 
 const getServerBaseUrl = () => {
   if (process.env.SERVER_BASE_URL) {

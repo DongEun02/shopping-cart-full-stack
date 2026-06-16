@@ -2,15 +2,19 @@ import request from 'supertest';
 import app from '../../src/app';
 import { describe, expect, test } from '@jest/globals';
 
-import {
-  getAllProducts,
-  createProduct,
-} from '../../src/service/productService';
+import { createProduct } from '../../src/service/productService';
 import {
   createShoppingCart,
   patchShoppingCart,
   getShoppingCart,
 } from '../../src/service/shoppingCartService';
+
+const getShoppingCartResponse = () => {
+  return getShoppingCart().map(({ product, quantity }) => ({
+    product: product?.getProduct(),
+    quantity,
+  }));
+};
 
 describe('장바구니 상품 API 테스트', () => {
   test('클라이언트가 GET 요청 시 장바구니 상품 목록을 받아온다.', async () => {
@@ -19,23 +23,24 @@ describe('장바구니 상품 API 테스트', () => {
       price: 1000,
       image: 'example/com',
     };
-    const product = createProduct(productData);
+    const products = createProduct(productData);
+    const createdProduct = products[products.length - 1].getProduct();
 
-    createShoppingCart(product[0].getProduct().id, 3);
+    createShoppingCart(createdProduct.id, 3);
 
     const response = await request(app).get('/carts');
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual([
-      {
-        product: { id: product[0].getProduct().id, ...productData },
-        quantity: 3,
-      },
-    ]);
+    expect(response.body).toEqual(getShoppingCartResponse());
+    expect(response.body).toContainEqual({
+      product: { id: createdProduct.id, ...productData },
+      quantity: 3,
+    });
   });
 
   test('클라이언트가 PATCH 요청 시 상품 수량을 변경한다', async () => {
-    const id = getAllProducts()[0].getProduct().id;
+    const cartItem = getShoppingCart()[0];
+    const id = cartItem.product!.getProduct().id;
 
     patchShoppingCart(id, 4);
 
@@ -44,15 +49,21 @@ describe('장바구니 상품 API 테스트', () => {
       .send({ quantity: 4 });
 
     expect(response.status).toBe(204);
-    expect(getShoppingCart()[0].quantity).toBe(4);
+    expect(
+      getShoppingCart().find(({ product }) => product?.getProduct().id === id)
+        ?.quantity,
+    ).toBe(4);
   });
 
   test('클라이언트가 DELETE 요청 시 해당 상품을 삭제한다.', async () => {
-    const id = getAllProducts()[0].getProduct().id;
+    const cartItem = getShoppingCart()[0];
+    const id = cartItem.product!.getProduct().id;
 
     const response = await request(app).delete(`/carts/${id}`);
 
     expect(response.status).toBe(204);
-    expect(getShoppingCart()).toEqual([]);
+    expect(
+      getShoppingCart().map(({ product }) => product?.getProduct().id),
+    ).not.toContain(id);
   });
 });

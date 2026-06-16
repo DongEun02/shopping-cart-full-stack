@@ -1,9 +1,11 @@
 import Product from '../domain/Product.ts';
 import ShoppingCart from '../domain/ShoppingCart.ts';
-import type { ProductId, CouponWithState } from '../types/type.ts';
+import Order from '../domain/Order.ts';
+import type { ProductId, CouponWithState, OrderId } from '../types/type.ts';
 
 export const products = new Map<ProductId, Product>();
 export const shoppingCart = new ShoppingCart();
+export const orders = new Map<OrderId, Order>();
 export const coupons: CouponWithState[] = [
   {
     code: 'FIXED5000',

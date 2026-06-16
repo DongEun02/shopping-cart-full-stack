@@ -6,6 +6,7 @@ export type ProductData = {
 
 export type ProductId = string;
 export type Quantity = number;
+export type OrderId = string;
 
 export type ShoppingCartData = {
   productId: ProductId;
@@ -55,6 +56,7 @@ export type CouponWithState = Coupon & {
 };
 
 export type OrderData = {
+  id: OrderId;
   products: {
     productId: ProductId;
     name: string;

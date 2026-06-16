@@ -1,6 +1,7 @@
 import type { OrderData, OrderProduct } from '../types/type.ts';
 
 export default class Order {
+  private id: string = crypto.randomUUID();
   private orderProducts: OrderProduct[] = [];
   private isRemoteArea: boolean = false;
   private orderAmount: number = 0;
@@ -8,20 +9,21 @@ export default class Order {
   private shippingFee: number = 0;
   private totalAmount: number = 0;
 
-  constructor(products: OrderProduct) {
-    this.orderProducts.push(products);
-    this.#setOrderAmount(this.orderProducts);
-    this.#setShippingFee();
+  createOrder(products: OrderProduct[]) {
+    this.orderProducts = products;
+    this.#calculateOrderAmount(this.orderProducts);
+    this.#calculateShippingFee();
   }
 
-  #setOrderAmount(orderProducts: OrderProduct[]) {
+  #calculateOrderAmount(orderProducts: OrderProduct[]) {
     this.orderAmount = orderProducts.reduce((total, item) => {
       return total + item.price * item.quantity;
     }, 0);
   }
 
-  #setShippingFee() {
+  #calculateShippingFee() {
     this.shippingFee = this.orderAmount >= 100000 ? 0 : 3000;
+    this.shippingFee += this.isRemoteArea ? 3000 : 0;
   }
 
   setAmount(discountAmount: number, totalAmount: number) {
@@ -31,6 +33,11 @@ export default class Order {
 
   setRemoteArea(isRemoteArea: boolean) {
     this.isRemoteArea = isRemoteArea;
+    this.#calculateShippingFee();
+  }
+
+  getId() {
+    return this.id;
   }
 
   getOrderData() {
@@ -39,6 +46,7 @@ export default class Order {
 
   getOrder(): OrderData {
     return {
+      id: this.id,
       products: this.orderProducts,
       isRemoteArea: this.isRemoteArea,
       amount: {

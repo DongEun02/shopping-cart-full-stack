@@ -53,3 +53,25 @@ export type CouponWithState = Coupon & {
   isSelected: boolean;
   isDisabled: boolean;
 };
+
+export type OrderData = {
+  products: {
+    productId: ProductId;
+    name: string;
+    price: number;
+    image?: string | null;
+    quantity: Quantity;
+  }[];
+  isRemoteArea: boolean;
+  amount: {
+    orderAmount: number;
+    discountAmount: number;
+    shippingFee: number;
+    totalAmount: number;
+  };
+};
+
+export type OrderProduct = ProductData & {
+  quantity: Quantity;
+  productId: ProductId;
+};

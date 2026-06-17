@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   getShoppingCart,
-  patchShoppingCart,
+  patchShoppingCartItem,
   deleteShoppingCart,
   hasShoppingCartProduct,
 } from './service/shoppingCartService.ts';
@@ -25,7 +25,17 @@ router.patch('/:id', (req, res, next) => {
       return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
     }
 
-    patchShoppingCart(productId, quantity);
+    if (
+      req.body.isSelected !== undefined &&
+      typeof req.body.isSelected !== 'boolean'
+    ) {
+      return res.status(400).send({ message: '선택 상태가 올바르지 않습니다.' });
+    }
+
+    patchShoppingCartItem(productId, {
+      quantity,
+      isSelected: req.body.isSelected,
+    });
     res.status(204).send();
   } catch (error) {
     if (error instanceof Error) {

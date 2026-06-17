@@ -11,6 +11,7 @@ export type OrderId = string;
 export type ShoppingCartData = {
   productId: ProductId;
   quantity: Quantity;
+  isSelected?: boolean;
 };
 
 interface BaseCoupon {

@@ -10,15 +10,46 @@ export function createShoppingCart(productId: ProductId, quantity: Quantity) {
 export function getShoppingCart(): {
   product: Product | undefined;
   quantity: Quantity;
+  isSelected: boolean;
 }[] {
   const shoppingCartArray = shoppingCart.getShoppingCart();
-  return shoppingCartArray.map(({ productId, quantity }) => {
-    return { product: products.get(productId), quantity: quantity };
+  return shoppingCartArray.map(({ productId, quantity, isSelected }) => {
+    return {
+      product: products.get(productId),
+      quantity,
+      isSelected: !!isSelected,
+    };
   });
 }
 
 export function patchShoppingCart(productId: ProductId, quantity: Quantity) {
   shoppingCart.setQuantity(productId, quantity);
+}
+
+export function patchShoppingCartSelection(
+  productId: ProductId,
+  isSelected: boolean,
+) {
+  shoppingCart.setSelection(productId, isSelected);
+}
+
+export function patchShoppingCartItem(
+  productId: ProductId,
+  {
+    quantity,
+    isSelected,
+  }: {
+    quantity?: Quantity;
+    isSelected?: boolean;
+  },
+) {
+  if (quantity !== undefined) {
+    shoppingCart.setQuantity(productId, quantity);
+  }
+
+  if (isSelected !== undefined) {
+    shoppingCart.setSelection(productId, isSelected);
+  }
 }
 
 export function deleteShoppingCart(productId: ProductId) {

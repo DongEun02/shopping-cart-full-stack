@@ -10,9 +10,10 @@ import {
 } from '../../src/service/shoppingCartService';
 
 const getShoppingCartResponse = () => {
-  return getShoppingCart().map(({ product, quantity }) => ({
+  return getShoppingCart().map(({ product, quantity, isSelected }) => ({
     product: product?.getProduct(),
     quantity,
+    isSelected,
   }));
 };
 
@@ -35,6 +36,7 @@ describe('장바구니 상품 API 테스트', () => {
     expect(response.body).toContainEqual({
       product: { id: createdProduct.id, ...productData },
       quantity: 3,
+      isSelected: true,
     });
   });
 
@@ -53,6 +55,21 @@ describe('장바구니 상품 API 테스트', () => {
       getShoppingCart().find(({ product }) => product?.getProduct().id === id)
         ?.quantity,
     ).toBe(4);
+  });
+
+  test('클라이언트가 PATCH 요청 시 상품 선택 상태를 변경한다', async () => {
+    const cartItem = getShoppingCart()[0];
+    const id = cartItem.product!.getProduct().id;
+
+    const response = await request(app)
+      .patch(`/carts/${id}`)
+      .send({ isSelected: false });
+
+    expect(response.status).toBe(204);
+    expect(
+      getShoppingCart().find(({ product }) => product?.getProduct().id === id)
+        ?.isSelected,
+    ).toBe(false);
   });
 
   test('클라이언트가 DELETE 요청 시 해당 상품을 삭제한다.', async () => {

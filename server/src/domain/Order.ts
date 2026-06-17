@@ -1,4 +1,4 @@
-import type { OrderData, OrderProduct } from '../types/type.ts';
+import type { CouponCode, OrderData, OrderProduct } from '../types/type.ts';
 
 export default class Order {
   private id: string = crypto.randomUUID();
@@ -8,11 +8,13 @@ export default class Order {
   private discountAmount: number = 0;
   private shippingFee: number = 0;
   private totalAmount: number = 0;
+  private selectedCouponCodes: CouponCode[] = [];
 
   createOrder(products: OrderProduct[]) {
     this.orderProducts = products;
     this.#calculateOrderAmount(this.orderProducts);
     this.#calculateShippingFee();
+    this.#calculateTotalAmount();
   }
 
   #calculateOrderAmount(orderProducts: OrderProduct[]) {
@@ -26,14 +28,37 @@ export default class Order {
     this.shippingFee += this.isRemoteArea ? 3000 : 0;
   }
 
+  #calculateTotalAmount() {
+    this.totalAmount =
+      this.orderAmount - this.discountAmount + this.shippingFee;
+  }
+
   setAmount(discountAmount: number, totalAmount: number) {
     this.discountAmount = discountAmount;
     this.totalAmount = totalAmount;
   }
 
+  applyDiscount(discountAmount: number) {
+    this.discountAmount = discountAmount;
+    this.#calculateTotalAmount();
+  }
+
+  setSelectedCouponCodes(couponCodes: CouponCode[]) {
+    this.selectedCouponCodes = couponCodes;
+  }
+
+  hasSelectedCoupon(couponCode: CouponCode) {
+    return this.selectedCouponCodes.includes(couponCode);
+  }
+
+  getSelectedCouponCodes() {
+    return this.selectedCouponCodes;
+  }
+
   setRemoteArea(isRemoteArea: boolean) {
     this.isRemoteArea = isRemoteArea;
     this.#calculateShippingFee();
+    this.#calculateTotalAmount();
   }
 
   getId() {

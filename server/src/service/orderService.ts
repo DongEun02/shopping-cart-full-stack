@@ -20,6 +20,12 @@ type CreateOrderItem = {
   quantity: Quantity;
 };
 
+type CouponDiscountResult = {
+  discountAmount: number;
+};
+
+const pendingOrderCouponCodes = new Map<OrderId, CouponCode[]>();
+
 function findOrder(id: OrderId) {
   const order = orders.get(id);
 
@@ -82,13 +88,27 @@ function isAvailableCoupon(order: Order, coupon: Coupon, currentDate: Date) {
   return discountAmount > 0;
 }
 
+function calculateSelectedDiscountAmount(
+  order: Order,
+  selectedCoupons: Coupon[],
+  currentDate: Date,
+): number {
+  const { discountAmount } = calculateSelectedCouponDiscount(
+    order.getOrder(),
+    selectedCoupons,
+    currentDate,
+  );
+
+  return discountAmount;
+}
+
 function applySelectedCouponsToOrder(
   order: Order,
   selectedCoupons: Coupon[],
   currentDate: Date,
 ) {
-  const { discountAmount } = calculateSelectedCouponDiscount(
-    order.getOrder(),
+  const discountAmount = calculateSelectedDiscountAmount(
+    order,
     selectedCoupons,
     currentDate,
   );
@@ -153,6 +173,7 @@ export function applyBestCoupons(orderId: OrderId) {
   const currentDate = new Date();
   const order = findOrder(orderId);
 
+  pendingOrderCouponCodes.delete(orderId);
   applyBestAvailableCouponsToOrder(order, currentDate);
 
   return order.getOrder();
@@ -161,20 +182,31 @@ export function applyBestCoupons(orderId: OrderId) {
 export function selectOrderCoupons(
   orderId: OrderId,
   couponCodes: CouponCode[],
-) {
+): CouponDiscountResult {
   const currentDate = new Date();
 
   const order = findOrder(orderId);
   const selectedCoupons = findCoupons(couponCodes);
-  const hasUnavailableCoupon = selectedCoupons.some((coupon) => {
-    return !isAvailableCoupon(order, coupon, currentDate);
-  });
+  pendingOrderCouponCodes.set(orderId, couponCodes);
 
-  if (hasUnavailableCoupon) {
-    throw new Error('사용할 수 없는 쿠폰입니다.');
-  }
+  return {
+    discountAmount: calculateSelectedDiscountAmount(
+      order,
+      selectedCoupons,
+      currentDate,
+    ),
+  };
+}
+
+export function confirmSelectedOrderCoupons(orderId: OrderId) {
+  const currentDate = new Date();
+  const order = findOrder(orderId);
+  const selectedCouponCodes =
+    pendingOrderCouponCodes.get(orderId) ?? order.getSelectedCouponCodes();
+  const selectedCoupons = findCoupons(selectedCouponCodes);
 
   applySelectedCouponsToOrder(order, selectedCoupons, currentDate);
+  pendingOrderCouponCodes.delete(orderId);
 
   return order.getOrder();
 }
@@ -187,6 +219,7 @@ export function updateOrderRemoteArea(
   const order = findOrder(orderId);
   const selectedCoupons = findCoupons(order.getSelectedCouponCodes());
 
+  pendingOrderCouponCodes.delete(orderId);
   order.setRemoteArea(isRemoteArea);
   applySelectedCouponsToOrder(order, selectedCoupons, currentDate);
 

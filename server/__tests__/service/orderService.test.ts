@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, jest, test } from '@jest/globals';
 import { getAllProducts } from '../../src/service/productService';
 import {
+  confirmSelectedOrderCoupons,
   createOrder,
   getOrder,
   getOrderCoupons,
@@ -37,19 +38,39 @@ describe('주문 서비스 테스트', () => {
     ).toEqual(['BOGO', 'MIRACLESALE']);
   });
 
-  test('사용자가 쿠폰을 변경하면 선택 쿠폰과 할인 금액을 주문서에 다시 반영한다.', () => {
+  test('사용자가 쿠폰을 선택하면 주문서 DB는 바꾸지 않고 계산 결과만 미리 보여준다.', () => {
     setCurrentTime(5);
 
     const product = getAllProducts()[0].getProduct();
     const { id } = createOrder([{ productId: product.id, quantity: 3 }]);
 
-    const order = selectOrderCoupons(id, ['FIXED5000']);
+    const couponDiscountResult = selectOrderCoupons(id, ['FIXED5000']);
+    const savedOrder = getOrder(id);
     const orderCoupons = getOrderCoupons(id);
+
+    expect(couponDiscountResult).toEqual({ discountAmount: 5000 });
+    expect(savedOrder.amount.discountAmount).toBe(56000);
+    expect(savedOrder.amount.totalAmount).toBe(49000);
+    expect(
+      orderCoupons
+        .filter(({ isSelected }) => isSelected)
+        .map(({ code }) => code),
+    ).toEqual(['BOGO', 'MIRACLESALE']);
+  });
+
+  test('쿠폰 사용을 확정하면 선택 쿠폰과 할인 금액을 주문서 DB에 반영한다.', () => {
+    setCurrentTime(5);
+
+    const product = getAllProducts()[0].getProduct();
+    const { id } = createOrder([{ productId: product.id, quantity: 3 }]);
+
+    selectOrderCoupons(id, ['FIXED5000']);
+    const order = confirmSelectedOrderCoupons(id);
 
     expect(order.amount.discountAmount).toBe(5000);
     expect(order.amount.totalAmount).toBe(100000);
     expect(
-      orderCoupons
+      getOrderCoupons(id)
         .filter(({ isSelected }) => isSelected)
         .map(({ code }) => code),
     ).toEqual(['FIXED5000']);
@@ -61,16 +82,18 @@ describe('주문 서비스 테스트', () => {
     const product = getAllProducts()[0].getProduct();
     const { id } = createOrder([{ productId: product.id, quantity: 3 }]);
 
-    const order = selectOrderCoupons(id, ['FIXED5000', 'BOGO']);
+    const couponDiscountResult = selectOrderCoupons(id, ['FIXED5000', 'BOGO']);
+    const savedOrder = getOrder(id);
     const orderCoupons = getOrderCoupons(id);
 
-    expect(order.amount.discountAmount).toBe(40000);
-    expect(order.amount.totalAmount).toBe(65000);
+    expect(couponDiscountResult).toEqual({ discountAmount: 40000 });
+    expect(savedOrder.amount.discountAmount).toBe(56000);
+    expect(savedOrder.amount.totalAmount).toBe(49000);
     expect(
       orderCoupons
         .filter(({ isSelected }) => isSelected)
         .map(({ code }) => code),
-    ).toEqual(['FIXED5000', 'BOGO']);
+    ).toEqual(['BOGO', 'MIRACLESALE']);
   });
 
   test('도서 산간 여부를 변경하면 현재 선택된 쿠폰 기준으로 할인 금액을 다시 계산한다.', () => {

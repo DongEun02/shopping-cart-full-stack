@@ -1,20 +1,18 @@
 import Product from '../domain/Product.ts';
 import ShoppingCart from '../domain/ShoppingCart.ts';
 import Order from '../domain/Order.ts';
-import type { ProductId, CouponWithState, OrderId } from '../types/type.ts';
+import type { ProductId, Coupon, OrderId } from '../types/type.ts';
 
 export const products = new Map<ProductId, Product>();
 export const shoppingCart = new ShoppingCart();
 export const orders = new Map<OrderId, Order>();
-export const coupons: CouponWithState[] = [
+export const coupons: Coupon[] = [
   {
     code: 'FIXED5000',
     name: '5,000원 할인 쿠폰',
     expiresAt: '2026-11-30',
     minOrderAmount: 100000,
     discountAmount: 5000,
-    isSelected: false,
-    isDisabled: false,
   },
   {
     code: 'BOGO',
@@ -22,8 +20,6 @@ export const coupons: CouponWithState[] = [
     expiresAt: '2026-06-30',
     minCount: 3,
     freeCount: 1,
-    isSelected: false,
-    isDisabled: false,
   },
   {
     code: 'FREESHIPPING',
@@ -32,8 +28,6 @@ export const coupons: CouponWithState[] = [
     minOrderAmount: 50000,
     discountAmount: 3000,
     remoteAreaFee: 3000,
-    isSelected: false,
-    isDisabled: false,
   },
   {
     code: 'MIRACLESALE',
@@ -42,8 +36,6 @@ export const coupons: CouponWithState[] = [
     discountRate: 30,
     startTime: '04:00',
     endTime: '07:00',
-    isSelected: false,
-    isDisabled: false,
   },
 ];
 

@@ -50,6 +50,8 @@ export type Coupon =
   | FreeShippingCoupon
   | PercentageCoupon;
 
+export type CouponCode = Coupon['code'];
+
 export type CouponWithState = Coupon & {
   isSelected: boolean;
   isDisabled: boolean;

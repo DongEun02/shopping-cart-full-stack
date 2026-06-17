@@ -49,6 +49,12 @@ export default class ShoppingCart {
     this.items.set(productId, { ...item, isSelected });
   }
 
+  setAllSelection(isSelected: boolean) {
+    this.items.forEach((item, productId) => {
+      this.items.set(productId, { ...item, isSelected });
+    });
+  }
+
   deleteProduct(productId: ProductId) {
     this.items.delete(productId);
   }

@@ -72,6 +72,15 @@ describe('장바구니 상품 API 테스트', () => {
     ).toBe(false);
   });
 
+  test('클라이언트가 PATCH 요청 시 모든 상품 선택 상태를 변경한다', async () => {
+    const response = await request(app)
+      .patch('/carts')
+      .send({ isSelected: true });
+
+    expect(response.status).toBe(204);
+    expect(getShoppingCart().every(({ isSelected }) => isSelected)).toBe(true);
+  });
+
   test('클라이언트가 DELETE 요청 시 해당 상품을 삭제한다.', async () => {
     const cartItem = getShoppingCart()[0];
     const id = cartItem.product!.getProduct().id;

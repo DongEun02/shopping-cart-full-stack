@@ -84,6 +84,27 @@ describe('쇼핑 장바구니 도메인 테스트', () => {
       { ...data, isSelected: false },
     ]);
   });
+
+  test('모든 장바구니 상품의 선택 상태를 변경한다.', () => {
+    const data1 = {
+      productId: 'testId1',
+      quantity: 3,
+    };
+    const data2 = {
+      productId: 'testId2',
+      quantity: 4,
+    };
+
+    const shoppingCart = new ShoppingCart();
+    shoppingCart.add(data1);
+    shoppingCart.add(data2);
+    shoppingCart.setAllSelection(false);
+
+    expect(shoppingCart.getShoppingCart()).toEqual([
+      { ...data1, isSelected: false },
+      { ...data2, isSelected: false },
+    ]);
+  });
 });
 
 describe('쇼핑 장바구니 도메인 예외 테스트', () => {

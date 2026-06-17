@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   getShoppingCart,
+  patchAllShoppingCartSelection,
   patchShoppingCartItem,
   deleteShoppingCart,
   hasShoppingCartProduct,
@@ -14,6 +15,15 @@ router.get('/', (_req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+router.patch('/', (req, res) => {
+  if (typeof req.body.isSelected !== 'boolean') {
+    return res.status(400).send({ message: '선택 상태가 올바르지 않습니다.' });
+  }
+
+  patchAllShoppingCartSelection(req.body.isSelected);
+  res.status(204).send();
 });
 
 router.patch('/:id', (req, res, next) => {

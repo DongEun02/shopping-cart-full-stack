@@ -33,6 +33,10 @@ export function patchShoppingCartSelection(
   shoppingCart.setSelection(productId, isSelected);
 }
 
+export function patchAllShoppingCartSelection(isSelected: boolean) {
+  shoppingCart.setAllSelection(isSelected);
+}
+
 export function patchShoppingCartItem(
   productId: ProductId,
   {

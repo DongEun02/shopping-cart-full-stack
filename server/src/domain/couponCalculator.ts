@@ -61,7 +61,7 @@ function calculateFreeShippingDiscount(
 function calculatePercentageDiscountByAmount(
   amount: number,
   coupon: PercentageCoupon,
-  currentDate = new Date(),
+  currentDate: Date,
 ) {
   const currentTime = getCurrentTime(currentDate);
   const currentMinutes = convertTimeToMinutes(currentTime);
@@ -127,7 +127,7 @@ function calculateShippingDiscount(order: OrderData, coupons: Coupon[]) {
 function calculateCouponDiscountAmount(
   order: OrderData,
   coupons: Coupon[],
-  currentDate = new Date(),
+  currentDate: Date,
 ) {
   const productDiscount = calculateProductDiscount(order, coupons);
   const discountBaseAmount = order.amount.orderAmount - productDiscount;
@@ -163,7 +163,7 @@ function createCouponCombinations(coupons: Coupon[], maxSize: number) {
 function findBestCouponCombination(
   order: OrderData,
   coupons: Coupon[],
-  currentDate = new Date(),
+  currentDate: Date,
 ) {
   const validCoupons = coupons.filter((coupon) => {
     return calculateCouponDiscountAmount(order, [coupon], currentDate) > 0;
@@ -191,7 +191,7 @@ function findBestCouponCombination(
 export function calculateBestCouponDiscount(
   order: OrderData,
   coupons: Coupon[],
-  currentDate = new Date(),
+  currentDate: Date,
 ) {
   const selectedCoupons = findBestCouponCombination(
     order,

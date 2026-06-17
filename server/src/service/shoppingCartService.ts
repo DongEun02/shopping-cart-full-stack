@@ -26,6 +26,24 @@ export function patchShoppingCart(productId: ProductId, quantity: Quantity) {
   shoppingCart.setQuantity(productId, quantity);
 }
 
+export function getShoppingCartAmountSummary() {
+  const orderAmount = getShoppingCart()
+    .filter(({ product, isSelected }) => product && isSelected)
+    .reduce((total, { product, quantity }) => {
+      return total + product!.getProduct().price * quantity;
+    }, 0);
+  const shippingFee = orderAmount >= 100000 || orderAmount === 0 ? 0 : 3000;
+  const totalAmount = orderAmount + shippingFee;
+
+  return {
+    amount: {
+      orderAmount,
+      shippingFee,
+      totalAmount,
+    },
+  };
+}
+
 export function patchShoppingCartSelection(
   productId: ProductId,
   isSelected: boolean,

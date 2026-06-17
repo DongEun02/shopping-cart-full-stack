@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   getShoppingCart,
+  getShoppingCartAmountSummary,
   patchAllShoppingCartSelection,
   patchShoppingCartItem,
   deleteShoppingCart,
@@ -12,6 +13,14 @@ const router = Router();
 router.get('/', (_req, res, next) => {
   try {
     res.status(200).send(getShoppingCart());
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/amount-summary', (_req, res, next) => {
+  try {
+    res.status(200).send(getShoppingCartAmountSummary());
   } catch (error) {
     next(error);
   }

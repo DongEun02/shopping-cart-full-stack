@@ -34,6 +34,10 @@ function findOrder(id: OrderId) {
   return order;
 }
 
+export function hasOrder(id: OrderId) {
+  return orders.has(id);
+}
+
 function createOrderProducts(items: CreateOrderItem[]): OrderProduct[] {
   return items.map(({ productId, quantity }) => {
     const product = products.get(productId);
@@ -64,6 +68,20 @@ function findCoupons(couponCodes: CouponCode[]): Coupon[] {
 
     return coupon;
   });
+}
+
+export function hasCoupons(couponCodes: string[]) {
+  return couponCodes.every((couponCode) => {
+    return coupons.some(({ code }) => code === couponCode);
+  });
+}
+
+export function isExceededCouponLimit(couponCodes: string[]) {
+  return couponCodes.length > 2;
+}
+
+export function isDuplicatedCoupons(couponCodes: string[]) {
+  return new Set(couponCodes).size !== couponCodes.length;
 }
 
 function isExpiredCoupon(coupon: Coupon, currentDate: Date) {
@@ -165,6 +183,12 @@ export function getOrderCoupons(orderId: OrderId): CouponWithState[] {
     isSelected: order.hasSelectedCoupon(coupon.code),
     isDisabled: !isAvailableCoupon(order, coupon, currentDate),
   }));
+}
+
+export function hasDisabledCoupon(orderId: OrderId, couponCodes: string[]) {
+  return getOrderCoupons(orderId).some(({ code, isDisabled }) => {
+    return couponCodes.includes(code) && isDisabled;
+  });
 }
 
 export function applyBestCoupons(orderId: OrderId) {

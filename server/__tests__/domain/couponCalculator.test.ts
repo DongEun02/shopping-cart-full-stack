@@ -1,12 +1,8 @@
 import { describe, expect, test } from '@jest/globals';
-import {
-  calculateBogoDiscount,
-  calculateFixedAmountDiscount,
-  calculateFreeShippingDiscount,
-  calculatePercentageDiscount,
-} from '../../src/domain/couponCalculator';
+import { calculateBestCouponDiscount } from '../../src/domain/couponCalculator';
 import type {
   BogoCoupon,
+  Coupon,
   FixedAmountCoupon,
   FreeShippingCoupon,
   OrderData,
@@ -48,6 +44,13 @@ const percentageCoupon: PercentageCoupon = {
   endTime: '07:00',
 };
 
+const coupons: Coupon[] = [
+  fixed5000Coupon,
+  bogoCoupon,
+  freeShippingCoupon,
+  percentageCoupon,
+];
+
 const createDateAt = (time: string) => {
   return new Date(`2026-06-17T${time}:00`);
 };
@@ -65,6 +68,7 @@ const createOrder = (
   const orderAmount = products.reduce((total, product) => {
     return total + product.price * product.quantity;
   }, 0);
+  const shippingFee = calculateShippingFee(orderAmount, isRemoteArea);
 
   return {
     id: 'order-id',
@@ -73,9 +77,8 @@ const createOrder = (
     amount: {
       orderAmount,
       discountAmount: 0,
-      shippingFee: calculateShippingFee(orderAmount, isRemoteArea),
-      totalAmount:
-        orderAmount + calculateShippingFee(orderAmount, isRemoteArea),
+      shippingFee,
+      totalAmount: orderAmount + shippingFee,
     },
   };
 };
@@ -83,229 +86,166 @@ const createOrder = (
 const createSingleProductOrder = (
   orderAmount: number,
   isRemoteArea = false,
-): OrderData => ({
-  id: 'order-id',
-  products: [
-    {
-      productId: 'product-id',
-      name: '상품',
-      price: orderAmount,
-      image: 'example/com',
-      quantity: 1,
-    },
-  ],
-  isRemoteArea,
-  amount: {
-    orderAmount,
-    discountAmount: 0,
-    shippingFee: calculateShippingFee(orderAmount, isRemoteArea),
-    totalAmount: orderAmount + calculateShippingFee(orderAmount, isRemoteArea),
-  },
-});
-
-describe('FIXED5000 쿠폰', () => {
-  test('주문 금액이 최소 주문 금액 이상이면 고정 금액을 할인한다.', () => {
-    const order = createSingleProductOrder(120000);
-
-    const discountAmount = calculateFixedAmountDiscount(order, fixed5000Coupon);
-
-    expect(discountAmount).toBe(5000);
-  });
-
-  test('주문 금액이 최소 주문 금액 미만이면 할인하지 않는다.', () => {
-    const order = createSingleProductOrder(99999);
-
-    const discountAmount = calculateFixedAmountDiscount(order, fixed5000Coupon);
-
-    expect(discountAmount).toBe(0);
-  });
-
-  test('주문 금액이 최소 주문 금액과 같으면 고정 금액을 할인한다.', () => {
-    const order = createSingleProductOrder(100000);
-
-    const discountAmount = calculateFixedAmountDiscount(order, fixed5000Coupon);
-
-    expect(discountAmount).toBe(5000);
-  });
-});
-
-describe('BOGO 쿠폰', () => {
-  test('같은 상품 수량이 최소 수량 이상이면 해당 상품 1개 금액을 할인한다.', () => {
-    const order = createOrder([
+): OrderData => {
+  return createOrder(
+    [
       {
         productId: 'product-id',
         name: '상품',
-        price: 10000,
+        price: orderAmount,
         image: 'example/com',
-        quantity: 3,
+        quantity: 1,
       },
-    ]);
+    ],
+    isRemoteArea,
+  );
+};
 
-    const discountAmount = calculateBogoDiscount(order, bogoCoupon);
+const expectBestCouponSimulation = ({
+  order,
+  time,
+  expectedCouponCodes,
+  expectedDiscountAmount,
+  availableCoupons = coupons,
+}: {
+  order: OrderData;
+  time: string;
+  expectedCouponCodes: string[];
+  expectedDiscountAmount: number;
+  availableCoupons?: Coupon[];
+}) => {
+  const { selectedCoupons, discountAmount } = calculateBestCouponDiscount(
+    order,
+    availableCoupons,
+    createDateAt(time),
+  );
 
-    expect(discountAmount).toBe(10000);
+  expect(selectedCoupons.map((coupon) => coupon.code)).toEqual(
+    expectedCouponCodes,
+  );
+  expect(discountAmount).toBe(expectedDiscountAmount);
+};
+
+describe('최적 쿠폰 계산', () => {
+  test('5만원 미만이고 2+1 조건도 없으면 미라클모닝 정율 쿠폰만 적용한다.', () => {
+    expectBestCouponSimulation({
+      order: createSingleProductOrder(40000),
+      time: '05:00',
+      expectedCouponCodes: ['MIRACLESALE'],
+      expectedDiscountAmount: 12000,
+    });
   });
 
-  test('같은 상품 수량이 최소 수량 미만이면 할인하지 않는다.', () => {
-    const order = createOrder([
-      {
-        productId: 'product-id',
-        name: '상품',
-        price: 10000,
-        image: 'example/com',
-        quantity: 2,
-      },
-    ]);
-
-    const discountAmount = calculateBogoDiscount(order, bogoCoupon);
-
-    expect(discountAmount).toBe(0);
+  test('5만원 미만이고 미라클모닝 시간도 아니면 적용 가능한 쿠폰이 없다.', () => {
+    expectBestCouponSimulation({
+      order: createSingleProductOrder(40000),
+      time: '08:00',
+      expectedCouponCodes: [],
+      expectedDiscountAmount: 0,
+    });
   });
 
-  test('같은 상품 수량이 최소 수량을 초과해도 상품 1개 금액만 할인한다.', () => {
-    const order = createOrder([
-      {
-        productId: 'product-id',
-        name: '상품',
-        price: 10000,
-        image: 'example/com',
-        quantity: 6,
-      },
-    ]);
-
-    const discountAmount = calculateBogoDiscount(order, bogoCoupon);
-
-    expect(discountAmount).toBe(10000);
+  test('5만원 일반 배송 주문에서는 정율 쿠폰과 무료 배송 쿠폰 조합을 적용한다.', () => {
+    expectBestCouponSimulation({
+      order: createSingleProductOrder(50000),
+      time: '05:00',
+      expectedCouponCodes: ['FREESHIPPING', 'MIRACLESALE'],
+      expectedDiscountAmount: 18000,
+    });
   });
 
-  test('조건을 만족하는 상품이 여러 개면 가장 비싼 상품 1개 금액을 할인한다.', () => {
-    const order = createOrder([
-      {
-        productId: 'product-a',
-        name: '상품 A',
-        price: 10000,
-        image: 'example/a',
-        quantity: 3,
-      },
-      {
-        productId: 'product-b',
-        name: '상품 B',
-        price: 30000,
-        image: 'example/b',
-        quantity: 3,
-      },
-    ]);
-
-    const discountAmount = calculateBogoDiscount(order, bogoCoupon);
-
-    expect(discountAmount).toBe(30000);
-  });
-});
-
-describe('FREESHIPPING 쿠폰', () => {
-  test('주문 금액이 최소 주문 금액 이상이면 실제 배송비를 할인한다.', () => {
-    const order = createSingleProductOrder(50000);
-
-    const discountAmount = calculateFreeShippingDiscount(
-      order,
-      freeShippingCoupon,
-    );
-
-    expect(discountAmount).toBe(3000);
+  test('10만원 주문에서는 정액 쿠폰과 정율 쿠폰 조합을 적용한다.', () => {
+    expectBestCouponSimulation({
+      order: createSingleProductOrder(100000),
+      time: '05:00',
+      expectedCouponCodes: ['FIXED5000', 'MIRACLESALE'],
+      expectedDiscountAmount: 33500,
+    });
   });
 
-  test('주문 금액이 최소 주문 금액 미만이면 할인하지 않는다.', () => {
-    const order = createSingleProductOrder(49999);
-
-    const discountAmount = calculateFreeShippingDiscount(
-      order,
-      freeShippingCoupon,
-    );
-
-    expect(discountAmount).toBe(0);
+  test('도서 산간 10만원 주문에서는 정액 쿠폰과 정율 쿠폰 조합을 적용한다.', () => {
+    expectBestCouponSimulation({
+      order: createSingleProductOrder(100000, true),
+      time: '05:00',
+      expectedCouponCodes: ['FIXED5000', 'MIRACLESALE'],
+      expectedDiscountAmount: 33500,
+    });
   });
 
-  test('도서 산간 지역이면 추가 배송비까지 할인한다.', () => {
-    const order = createSingleProductOrder(50000, true);
-
-    const discountAmount = calculateFreeShippingDiscount(
-      order,
-      freeShippingCoupon,
-    );
-
-    expect(discountAmount).toBe(6000);
+  test('미라클모닝 시간이 아니고 2+1 조건을 만족하면 BOGO와 정액 쿠폰 조합을 적용한다.', () => {
+    expectBestCouponSimulation({
+      order: createOrder([
+        {
+          productId: 'product-id',
+          name: '상품',
+          price: 40000,
+          image: 'example/com',
+          quantity: 3,
+        },
+      ]),
+      time: '08:00',
+      expectedCouponCodes: ['FIXED5000', 'BOGO'],
+      expectedDiscountAmount: 45000,
+    });
   });
 
-  test('기본 배송비가 무료여도 도서 산간 추가 배송비는 할인한다.', () => {
-    const order = createSingleProductOrder(100000, true);
-
-    const discountAmount = calculateFreeShippingDiscount(
-      order,
-      freeShippingCoupon,
-    );
-
-    expect(discountAmount).toBe(3000);
-  });
-});
-
-describe('MIRACLESALE 쿠폰', () => {
-  test('사용 가능 시간에 주문 금액의 할인율만큼 할인한다.', () => {
-    const order = createSingleProductOrder(100000);
-
-    const discountAmount = calculatePercentageDiscount(
-      order,
-      percentageCoupon,
-      createDateAt('05:00'),
-    );
-
-    expect(discountAmount).toBe(30000);
+  test('미라클모닝 시간이고 2+1 조건을 만족하면 BOGO와 정율 쿠폰을 적용한다.', () => {
+    expectBestCouponSimulation({
+      order: createOrder([
+        {
+          productId: 'product-id',
+          name: '상품',
+          price: 40000,
+          image: 'example/com',
+          quantity: 3,
+        },
+      ]),
+      time: '05:00',
+      expectedCouponCodes: ['BOGO', 'MIRACLESALE'],
+      expectedDiscountAmount: 64000,
+    });
   });
 
-  test('할인 금액에 소수점이 있으면 원 단위로 내림한다.', () => {
-    const order = createSingleProductOrder(99999);
-
-    const discountAmount = calculatePercentageDiscount(
-      order,
-      percentageCoupon,
-      createDateAt('05:00'),
-    );
-
-    expect(discountAmount).toBe(29999);
+  test('구매 수량이 6개여도 2+1 쿠폰은 상품 1개 금액만 할인한다.', () => {
+    expectBestCouponSimulation({
+      order: createOrder([
+        {
+          productId: 'product-id',
+          name: '상품',
+          price: 10000,
+          image: 'example/com',
+          quantity: 6,
+        },
+      ]),
+      time: '08:00',
+      expectedCouponCodes: ['BOGO'],
+      expectedDiscountAmount: 10000,
+      availableCoupons: [bogoCoupon],
+    });
   });
 
-  test('시작 시간에는 할인한다.', () => {
-    const order = createSingleProductOrder(100000);
-
-    const discountAmount = calculatePercentageDiscount(
-      order,
-      percentageCoupon,
-      createDateAt('04:00'),
-    );
-
-    expect(discountAmount).toBe(30000);
-  });
-
-  test('종료 시간에는 할인하지 않는다.', () => {
-    const order = createSingleProductOrder(100000);
-
-    const discountAmount = calculatePercentageDiscount(
-      order,
-      percentageCoupon,
-      createDateAt('07:00'),
-    );
-
-    expect(discountAmount).toBe(0);
-  });
-
-  test('사용 가능 시간 전에는 할인하지 않는다.', () => {
-    const order = createSingleProductOrder(100000);
-
-    const discountAmount = calculatePercentageDiscount(
-      order,
-      percentageCoupon,
-      createDateAt('03:59'),
-    );
-
-    expect(discountAmount).toBe(0);
+  test('2+1 조건을 만족하는 상품이 여러 개면 가장 비싼 상품 1개 금액을 할인한다.', () => {
+    expectBestCouponSimulation({
+      order: createOrder([
+        {
+          productId: 'product-a',
+          name: '상품 A',
+          price: 10000,
+          image: 'example/a',
+          quantity: 3,
+        },
+        {
+          productId: 'product-b',
+          name: '상품 B',
+          price: 30000,
+          image: 'example/b',
+          quantity: 3,
+        },
+      ]),
+      time: '08:00',
+      expectedCouponCodes: ['BOGO'],
+      expectedDiscountAmount: 30000,
+      availableCoupons: [bogoCoupon],
+    });
   });
 });

@@ -206,3 +206,17 @@ export function calculateBestCouponDiscount(
 
   return { selectedCoupons, discountAmount };
 }
+
+export function calculateSelectedCouponDiscount(
+  order: OrderData,
+  selectedCoupons: Coupon[],
+  currentDate: Date,
+) {
+  const discountAmount = calculateCouponDiscountAmount(
+    order,
+    selectedCoupons,
+    currentDate,
+  );
+
+  return { selectedCoupons, discountAmount };
+}

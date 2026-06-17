@@ -1,5 +1,8 @@
 import { coupons, orders, products } from '../database/inMemoryDatabase.ts';
-import { calculateBestCouponDiscount } from '../domain/couponCalculator.ts';
+import {
+  calculateBestCouponDiscount,
+  calculateSelectedCouponDiscount,
+} from '../domain/couponCalculator.ts';
 import Order from '../domain/Order.ts';
 import type {
   Coupon,
@@ -79,15 +82,33 @@ function isAvailableCoupon(order: Order, coupon: Coupon, currentDate: Date) {
   return discountAmount > 0;
 }
 
-function applyCouponsToOrder(
+function applySelectedCouponsToOrder(
   order: Order,
   selectedCoupons: Coupon[],
   currentDate: Date,
 ) {
-  const { selectedCoupons: appliedCoupons, discountAmount } =
-    calculateBestCouponDiscount(order.getOrder(), selectedCoupons, currentDate);
+  const { discountAmount } = calculateSelectedCouponDiscount(
+    order.getOrder(),
+    selectedCoupons,
+    currentDate,
+  );
 
-  order.setSelectedCouponCodes(appliedCoupons.map(({ code }) => code));
+  order.setSelectedCouponCodes(selectedCoupons.map(({ code }) => code));
+  order.applyDiscount(discountAmount);
+}
+
+function applyBestCouponsToOrder(
+  order: Order,
+  availableCoupons: Coupon[],
+  currentDate: Date,
+) {
+  const { selectedCoupons, discountAmount } = calculateBestCouponDiscount(
+    order.getOrder(),
+    availableCoupons,
+    currentDate,
+  );
+
+  order.setSelectedCouponCodes(selectedCoupons.map(({ code }) => code));
   order.applyDiscount(discountAmount);
 }
 
@@ -106,7 +127,7 @@ function applyBestAvailableCouponsToOrder(order: Order, currentDate: Date) {
     return isAvailableCoupon(order, coupon, currentDate);
   });
 
-  applyCouponsToOrder(order, availableCoupons, currentDate);
+  applyBestCouponsToOrder(order, availableCoupons, currentDate);
 }
 
 export function createOrder(items: CreateOrderItem[]) {
@@ -153,7 +174,7 @@ export function selectOrderCoupons(
     throw new Error('사용할 수 없는 쿠폰입니다.');
   }
 
-  applyCouponsToOrder(order, selectedCoupons, currentDate);
+  applySelectedCouponsToOrder(order, selectedCoupons, currentDate);
 
   return order.getOrder();
 }
@@ -167,7 +188,7 @@ export function updateOrderRemoteArea(
   const selectedCoupons = findCoupons(order.getSelectedCouponCodes());
 
   order.setRemoteArea(isRemoteArea);
-  applyCouponsToOrder(order, selectedCoupons, currentDate);
+  applySelectedCouponsToOrder(order, selectedCoupons, currentDate);
 
   return order.getOrder();
 }

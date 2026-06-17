@@ -55,6 +55,24 @@ describe('주문 서비스 테스트', () => {
     ).toEqual(['FIXED5000']);
   });
 
+  test('사용자가 여러 쿠폰을 직접 선택하면 최적 조합으로 바꾸지 않고 선택한 쿠폰 그대로 적용한다.', () => {
+    setCurrentTime(5);
+
+    const product = getAllProducts()[0].getProduct();
+    const { id } = createOrder([{ productId: product.id, quantity: 3 }]);
+
+    const order = selectOrderCoupons(id, ['FIXED5000', 'BOGO']);
+    const orderCoupons = getOrderCoupons(id);
+
+    expect(order.amount.discountAmount).toBe(40000);
+    expect(order.amount.totalAmount).toBe(65000);
+    expect(
+      orderCoupons
+        .filter(({ isSelected }) => isSelected)
+        .map(({ code }) => code),
+    ).toEqual(['FIXED5000', 'BOGO']);
+  });
+
   test('도서 산간 여부를 변경하면 현재 선택된 쿠폰 기준으로 할인 금액을 다시 계산한다.', () => {
     setCurrentTime(5);
 

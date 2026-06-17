@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, jest, test } from '@jest/globals';
 import { getAllProducts } from '../../src/service/productService';
 import {
-  confirmSelectedOrderCoupons,
+  calculateOrderCouponDiscount,
+  updateOrderCoupons,
   createOrder,
   getOrder,
   getOrderCoupons,
-  selectOrderCoupons,
   updateOrderRemoteArea,
 } from '../../src/service/orderService';
 
@@ -44,7 +44,9 @@ describe('주문 서비스 테스트', () => {
     const product = getAllProducts()[0].getProduct();
     const { id } = createOrder([{ productId: product.id, quantity: 3 }]);
 
-    const couponDiscountResult = selectOrderCoupons(id, ['FIXED5000']);
+    const couponDiscountResult = calculateOrderCouponDiscount(id, [
+      'FIXED5000',
+    ]);
     const savedOrder = getOrder(id);
     const orderCoupons = getOrderCoupons(id);
 
@@ -64,8 +66,8 @@ describe('주문 서비스 테스트', () => {
     const product = getAllProducts()[0].getProduct();
     const { id } = createOrder([{ productId: product.id, quantity: 3 }]);
 
-    selectOrderCoupons(id, ['FIXED5000']);
-    const order = confirmSelectedOrderCoupons(id);
+    calculateOrderCouponDiscount(id, ['FIXED5000']);
+    const order = updateOrderCoupons(id, ['FIXED5000']);
 
     expect(order.amount.discountAmount).toBe(5000);
     expect(order.amount.totalAmount).toBe(100000);
@@ -82,7 +84,10 @@ describe('주문 서비스 테스트', () => {
     const product = getAllProducts()[0].getProduct();
     const { id } = createOrder([{ productId: product.id, quantity: 3 }]);
 
-    const couponDiscountResult = selectOrderCoupons(id, ['FIXED5000', 'BOGO']);
+    const couponDiscountResult = calculateOrderCouponDiscount(id, [
+      'FIXED5000',
+      'BOGO',
+    ]);
     const savedOrder = getOrder(id);
     const orderCoupons = getOrderCoupons(id);
 

@@ -24,8 +24,6 @@ type CouponDiscountResult = {
   discountAmount: number;
 };
 
-const pendingOrderCouponCodes = new Map<OrderId, CouponCode[]>();
-
 function findOrder(id: OrderId) {
   const order = orders.get(id);
 
@@ -173,13 +171,12 @@ export function applyBestCoupons(orderId: OrderId) {
   const currentDate = new Date();
   const order = findOrder(orderId);
 
-  pendingOrderCouponCodes.delete(orderId);
   applyBestAvailableCouponsToOrder(order, currentDate);
 
   return order.getOrder();
 }
 
-export function selectOrderCoupons(
+export function calculateOrderCouponDiscount(
   orderId: OrderId,
   couponCodes: CouponCode[],
 ): CouponDiscountResult {
@@ -187,7 +184,6 @@ export function selectOrderCoupons(
 
   const order = findOrder(orderId);
   const selectedCoupons = findCoupons(couponCodes);
-  pendingOrderCouponCodes.set(orderId, couponCodes);
 
   return {
     discountAmount: calculateSelectedDiscountAmount(
@@ -198,28 +194,24 @@ export function selectOrderCoupons(
   };
 }
 
-export function confirmSelectedOrderCoupons(orderId: OrderId) {
+export function updateOrderCoupons(
+  orderId: OrderId,
+  couponCodes: CouponCode[],
+) {
   const currentDate = new Date();
   const order = findOrder(orderId);
-  const selectedCouponCodes =
-    pendingOrderCouponCodes.get(orderId) ?? order.getSelectedCouponCodes();
-  const selectedCoupons = findCoupons(selectedCouponCodes);
+  const selectedCoupons = findCoupons(couponCodes);
 
   applySelectedCouponsToOrder(order, selectedCoupons, currentDate);
-  pendingOrderCouponCodes.delete(orderId);
 
   return order.getOrder();
 }
 
-export function updateOrderRemoteArea(
-  orderId: OrderId,
-  isRemoteArea: boolean,
-) {
+export function updateOrderRemoteArea(orderId: OrderId, isRemoteArea: boolean) {
   const currentDate = new Date();
   const order = findOrder(orderId);
   const selectedCoupons = findCoupons(order.getSelectedCouponCodes());
 
-  pendingOrderCouponCodes.delete(orderId);
   order.setRemoteArea(isRemoteArea);
   applySelectedCouponsToOrder(order, selectedCoupons, currentDate);
 

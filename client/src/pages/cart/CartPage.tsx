@@ -99,7 +99,6 @@ export default function CartPage() {
       </CartSection>
       <Button
         type={type}
-        text="주문 확인"
         onClick={() =>
           navigate('checkout', {
             state: {
@@ -108,7 +107,9 @@ export default function CartPage() {
             },
           })
         }
-      />
+      >
+        주문 확인
+      </Button>
     </div>
   );
 }

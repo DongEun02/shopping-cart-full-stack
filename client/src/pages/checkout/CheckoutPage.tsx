@@ -22,11 +22,9 @@ export default function CheckoutPage() {
     >
       <Header page="checkout" />
       <OrderCheck />
-      <Button
-        type="inactive"
-        text="결제하기"
-        onClick={() => navigate('/pay')}
-      />
+      <Button type="inactive" onClick={() => navigate('/pay')}>
+        결제하기
+      </Button>
     </div>
   );
 }

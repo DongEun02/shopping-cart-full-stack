@@ -1,12 +1,13 @@
+import type { ReactNode } from 'react';
 import { colors, typography } from '../styles/theme';
 
 type ButtonProps = {
   type: string;
-  text: string;
   onClick: () => void;
+  children: ReactNode;
 };
 
-export default function Button({ type, text, onClick }: ButtonProps) {
+export default function Button({ type, onClick, children }: ButtonProps) {
   const background = type === 'active' ? colors.black : colors.inactive;
   const isActive = type === 'active' ? false : true;
 
@@ -25,7 +26,7 @@ export default function Button({ type, text, onClick }: ButtonProps) {
         border: 'none',
       }}
     >
-      {text}
+      {children}
     </button>
   );
 }

@@ -27,7 +27,7 @@ export default function Txt({
   children,
 }: {
   variant: keyof typeof typography;
-  color?: keyof typeof colors;
+  color: keyof typeof colors;
   styles?: React.CSSProperties;
   children: ReactNode;
 }) {

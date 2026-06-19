@@ -3,6 +3,7 @@ export const colors = {
   black: '#000000',
   text: '#0A0D13',
   inactive: '#BEBEBE',
+  error: '#ff0000',
 };
 
 export const typography = {

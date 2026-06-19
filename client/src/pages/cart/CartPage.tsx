@@ -66,7 +66,7 @@ export default function CartPage() {
           margin: '0 auto',
         }}
       >
-        <Txt variant="label" styles={{ color: 'red' }}>
+        <Txt variant="label" color="error">
           {error.message}
         </Txt>
       </div>

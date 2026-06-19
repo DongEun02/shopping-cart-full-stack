@@ -1,5 +1,5 @@
 import Header from '../../shared/ui/Header';
-import Button from '../../shared/ui/Button';
+import { BottomButton } from '../../shared/ui/Button';
 import OrderCheck from './ui/OrderCheck';
 import { colors } from '../../shared/styles/theme';
 import { useNavigate } from 'react-router-dom';
@@ -22,9 +22,9 @@ export default function CheckoutPage() {
     >
       <Header page="checkout" />
       <OrderCheck />
-      <Button type="inactive" onClick={() => navigate('/pay')}>
+      <BottomButton disabled onClick={() => navigate('/pay')}>
         결제하기
-      </Button>
+      </BottomButton>
     </div>
   );
 }

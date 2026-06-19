@@ -8,7 +8,7 @@ import {
 } from '../../entities/cart/calculate';
 import { getSelectedCartItems } from '../../entities/cart/selector';
 import { colors } from '../../shared/styles/theme';
-import Button from '../../shared/ui/Button';
+import { BottomButton } from '../../shared/ui/Button';
 import Header from '../../shared/ui/Header';
 import Spinner from '../../shared/ui/Spinner';
 import Txt from '../../shared/ui/Txt';
@@ -28,8 +28,6 @@ export default function CartPage() {
   const orderAmount = calculateOrderAmount(selectedItems);
   const deliveryFee = calculateDeliveryFee(orderAmount);
   const totalAmount = calculateTotalAmount(orderAmount, deliveryFee);
-
-  const type = selectedItems.length === 0 ? 'inactive' : 'active';
 
   useEffect(() => {
     if (!mutationError) return;
@@ -97,8 +95,8 @@ export default function CartPage() {
           totalAmount={totalAmount}
         />
       </CartSection>
-      <Button
-        type={type}
+      <BottomButton
+        disabled={selectedItems.length === 0}
         onClick={() =>
           navigate('checkout', {
             state: {
@@ -109,7 +107,7 @@ export default function CartPage() {
         }
       >
         주문 확인
-      </Button>
+      </BottomButton>
     </div>
   );
 }

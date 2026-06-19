@@ -1,6 +1,9 @@
 import CheckBox from '../../../shared/ui/CheckBox';
 import Txt from '../../../shared/ui/Txt';
-import { colors, typography } from '../../../shared/styles/theme';
+import {
+  DeleteButton,
+  QuantityButton,
+} from '../../../shared/ui/Button';
 import type { CartItem } from '../types';
 
 type CartItemCardProps = {
@@ -9,17 +12,6 @@ type CartItemCardProps = {
   onDecrease: (id: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
   onToggleItem: (id: string, checked: boolean) => void;
-};
-
-const quantityButtonStyle = {
-  width: '24px',
-  height: '24px',
-  border: '1px solid #e5e5e5',
-  borderRadius: '8px',
-  backgroundColor: colors.white,
-  color: colors.text,
-  fontSize: '16px',
-  padding: 0,
 };
 
 export default function CartItemCard({
@@ -41,34 +33,18 @@ export default function CartItemCard({
       <div
         css={{
           position: 'absolute',
+          width: '100%',
           top: '12px',
-          left: 0,
+          display: 'flex',
+          justifyContent: 'space-between',
         }}
       >
         <CheckBox
           checked={cartItem.isSelected}
           onChange={(checked) => onToggleItem(cartItem.product.id, checked)}
         />
+        <DeleteButton onClick={() => onDelete(cartItem.product.id)} />
       </div>
-
-      <button
-        type="button"
-        css={{
-          position: 'absolute',
-          top: '12px',
-          right: 0,
-          width: '40px',
-          height: '24px',
-          border: '1px solid #e5e5e5',
-          borderRadius: '4px',
-          backgroundColor: colors.white,
-          color: colors.text,
-          ...typography.label,
-        }}
-        onClick={() => onDelete(cartItem.product.id)}
-      >
-        삭제
-      </button>
 
       <img
         css={{
@@ -107,23 +83,19 @@ export default function CartItemCard({
             gap: '12px',
           }}
         >
-          <button
-            type="button"
-            css={quantityButtonStyle}
+          <QuantityButton
             onClick={() => onDecrease(cartItem.product.id)}
           >
             -
-          </button>
+          </QuantityButton>
           <Txt variant="label" color="black">
             {cartItem.quantity}
           </Txt>
-          <button
-            type="button"
-            css={quantityButtonStyle}
+          <QuantityButton
             onClick={() => onIncrease(cartItem.product.id)}
           >
             +
-          </button>
+          </QuantityButton>
         </div>
       </div>
     </li>

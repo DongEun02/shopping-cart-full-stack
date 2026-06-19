@@ -1,9 +1,6 @@
 import CheckBox from '../../../shared/ui/CheckBox';
 import Txt from '../../../shared/ui/Txt';
-import {
-  DeleteButton,
-  QuantityButton,
-} from '../../../shared/ui/Button';
+import { DeleteButton, QuantityButton } from '../../../shared/ui/Button';
 import type { CartItem } from '../types';
 
 type CartItemCardProps = {
@@ -43,7 +40,9 @@ export default function CartItemCard({
           checked={cartItem.isSelected}
           onChange={(checked) => onToggleItem(cartItem.product.id, checked)}
         />
-        <DeleteButton onClick={() => onDelete(cartItem.product.id)} />
+        <DeleteButton onClick={() => onDelete(cartItem.product.id)}>
+          삭제
+        </DeleteButton>
       </div>
 
       <img
@@ -83,17 +82,13 @@ export default function CartItemCard({
             gap: '12px',
           }}
         >
-          <QuantityButton
-            onClick={() => onDecrease(cartItem.product.id)}
-          >
+          <QuantityButton onClick={() => onDecrease(cartItem.product.id)}>
             -
           </QuantityButton>
           <Txt variant="label" color="black">
             {cartItem.quantity}
           </Txt>
-          <QuantityButton
-            onClick={() => onIncrease(cartItem.product.id)}
-          >
+          <QuantityButton onClick={() => onIncrease(cartItem.product.id)}>
             +
           </QuantityButton>
         </div>

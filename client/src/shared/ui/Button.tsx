@@ -88,10 +88,11 @@ export function QuantityButton({ children, onClick }: QuantityButtonProps) {
 }
 
 type DeleteButtonProps = {
+  children: ReactNode;
   onClick: () => void;
 };
 
-export function DeleteButton({ onClick }: DeleteButtonProps) {
+export function DeleteButton({ children, onClick }: DeleteButtonProps) {
   return (
     <BaseButton
       onClick={onClick}
@@ -105,7 +106,7 @@ export function DeleteButton({ onClick }: DeleteButtonProps) {
         ...typography.label,
       }}
     >
-      삭제
+      {children}
     </BaseButton>
   );
 }

@@ -6,13 +6,12 @@ import {
   calculateOrderAmount,
   calculateTotalAmount,
 } from '../../entities/cart/calculate';
-import {
-  getSelectedCartItems,
-} from '../../entities/cart/selector';
-import { colors, typography } from '../../shared/styles/theme';
+import { getSelectedCartItems } from '../../entities/cart/selector';
+import { colors } from '../../shared/styles/theme';
 import Button from '../../shared/ui/Button';
 import Header from '../../shared/ui/Header';
 import Spinner from '../../shared/ui/Spinner';
+import Txt from '../../shared/ui/Txt';
 import { useCartItems } from './hooks/useCartItems';
 import { useCartMutationError } from './hooks/useCartMutationError';
 import CartList from './ui/CartList';
@@ -69,14 +68,9 @@ export default function CartPage() {
           margin: '0 auto',
         }}
       >
-        <p
-          css={{
-            ...typography.label,
-            color: 'red',
-          }}
-        >
+        <Txt variant="label" styles={{ color: 'red' }}>
           {error.message}
-        </p>
+        </Txt>
       </div>
     );
   }

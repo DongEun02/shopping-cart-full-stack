@@ -1,7 +1,6 @@
-import { colors, typography } from '../../../shared/styles/theme';
-
 import { useLocation } from 'react-router-dom';
 import type { CartItem } from '../../../entities/cart/types';
+import Txt from '../../../shared/ui/Txt';
 
 type CheckoutState = {
   cartItems: CartItem[];
@@ -29,24 +28,13 @@ export default function OrderCheck() {
         justifyContent: 'center',
       }}
     >
-      <p
-        css={{
-          color: colors.text,
-          ...typography.title,
-        }}
-      >
+      <Txt variant="title" color="text">
         주문 확인
-      </p>
-      <p
-        css={{
-          color: colors.text,
-          ...typography.label,
-          textAlign: 'center',
-        }}
-      >
+      </Txt>
+      <Txt variant="label" color="text" styles={{ textAlign: 'center' }}>
         총 {cartItems.length}종류의 상품 {itemCount}개를 주문합니다. <br />
         최종 결제 금액을 확인해 주세요.
-      </p>
+      </Txt>
       <div
         css={{
           display: 'flex',
@@ -55,22 +43,12 @@ export default function OrderCheck() {
           alignItems: 'center',
         }}
       >
-        <p
-          css={{
-            color: colors.text,
-            ...typography.button,
-          }}
-        >
+        <Txt variant="button" color="text">
           총 결제 금액
-        </p>
-        <p
-          css={{
-            color: colors.text,
-            ...typography.title,
-          }}
-        >
+        </Txt>
+        <Txt variant="title" color="text">
           {totalAmount.toLocaleString()}원
-        </p>
+        </Txt>
       </div>
     </section>
   );

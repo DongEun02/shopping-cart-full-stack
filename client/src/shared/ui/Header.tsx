@@ -1,21 +1,16 @@
-import { colors, typography } from '../styles/theme';
+import { colors } from '../styles/theme';
 import back from '../../assets/back.svg';
 import { useNavigate } from 'react-router-dom';
+import Txt from './Txt';
 
 export default function Header({ page }: { page: string }) {
   const navigate = useNavigate();
 
   const text =
     page === 'cart' ? (
-      <p
-        css={{
-          ...typography.header,
-          color: colors.white,
-          verticalAlign: 'middle',
-        }}
-      >
+      <Txt variant="header" color="white">
         SHOP
-      </p>
+      </Txt>
     ) : (
       <img
         alt="뒤로가기"

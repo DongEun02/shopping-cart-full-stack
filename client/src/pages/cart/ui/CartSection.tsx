@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { colors, typography } from '../../../shared/styles/theme';
+import Txt from '../../../shared/ui/Txt';
 
 type CartSectionProps = {
   cartItemsCount: number;
@@ -13,16 +14,13 @@ export default function CartSection({
   // 상품이 없는 경우
   if (cartItemsCount === 0) {
     return (
-      <p
-        css={{
-          color: colors.text,
-          ...typography.info,
-          textAlign: 'center',
-          margin: 'auto 0',
-        }}
+      <Txt
+        variant="info"
+        color="text"
+        styles={{ textAlign: 'center', margin: 'auto 0' }}
       >
         장바구니에 담은 상품이 없습니다.
-      </p>
+      </Txt>
     );
   }
 
@@ -48,14 +46,9 @@ export default function CartSection({
         >
           장바구니
         </h1>
-        <p
-          css={{
-            color: colors.text,
-            ...typography.label,
-          }}
-        >
+        <Txt variant="label" color="text">
           현재 {cartItemsCount}종류의 상품이 담겨있습니다.
-        </p>
+        </Txt>
       </div>
       {children}
     </section>

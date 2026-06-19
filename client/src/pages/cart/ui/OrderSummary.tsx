@@ -1,5 +1,5 @@
 import info from '../../../assets/Info-outline.svg';
-import { colors, typography } from '../../../shared/styles/theme';
+import Txt from '../../../shared/ui/Txt';
 
 type OrderSummaryProps = {
   orderAmount: number;
@@ -29,18 +29,14 @@ export default function OrderSummary({
         gap: '12px',
       }}
     >
-      <p
-        css={{
-          ...typography.label,
-          color: colors.text,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-        }}
+      <Txt
+        variant="label"
+        color="text"
+        styles={{ display: 'flex', alignItems: 'center', gap: '4px' }}
       >
         <img src={info} alt="" width={16} height={16} />
         <span>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</span>
-      </p>
+      </Txt>
 
       <div
         css={{
@@ -59,36 +55,20 @@ export default function OrderSummary({
         }}
       >
         <div css={summarySectionStyle}>
-          <p
-            css={{
-              ...typography.button,
-            }}
-          >
+          <Txt variant="button" color="text">
             주문 금액
-          </p>
-          <p
-            css={{
-              ...typography.title,
-            }}
-          >
+          </Txt>
+          <Txt variant="title" color="black">
             {orderAmount.toLocaleString()}원
-          </p>
+          </Txt>
         </div>
         <div css={summarySectionStyle}>
-          <p
-            css={{
-              ...typography.button,
-            }}
-          >
+          <Txt variant="button" color="text">
             배송비
-          </p>
-          <p
-            css={{
-              ...typography.title,
-            }}
-          >
+          </Txt>
+          <Txt variant="title" color="black">
             {deliveryFee.toLocaleString()}원
-          </p>
+          </Txt>
         </div>
       </div>
 
@@ -101,20 +81,12 @@ export default function OrderSummary({
       />
 
       <div css={summarySectionStyle}>
-        <p
-          css={{
-            ...typography.button,
-          }}
-        >
+        <Txt variant="button" color="text">
           총 결제 금액
-        </p>
-        <p
-          css={{
-            ...typography.title,
-          }}
-        >
+        </Txt>
+        <Txt variant="title" color="black">
           {totalAmount.toLocaleString()}원
-        </p>
+        </Txt>
       </div>
     </section>
   );

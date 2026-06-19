@@ -1,6 +1,6 @@
 import checkedIcon from '../../assets/active-check.svg';
 import uncheckedIcon from '../../assets/inactive-check.svg';
-import { colors, typography } from '../styles/theme';
+import Txt from './Txt';
 
 type CheckboxProps = {
   checked: boolean;
@@ -36,14 +36,9 @@ export default function Checkbox({ checked, label, onChange }: CheckboxProps) {
         height={24}
       />
       {label && (
-        <span
-          css={{
-            ...typography.label,
-            color: colors.text,
-          }}
-        >
+        <Txt variant="label" color="text">
           {label}
-        </span>
+        </Txt>
       )}
     </label>
   );

@@ -1,4 +1,5 @@
 import CheckBox from '../../../shared/ui/CheckBox';
+import Txt from '../../../shared/ui/Txt';
 import { colors, typography } from '../../../shared/styles/theme';
 import type { CartItem } from '../types';
 
@@ -90,24 +91,13 @@ export default function CartItemCard({
         }}
       >
         <div>
-          <p
-            css={{
-              marginBottom: '4px',
-              color: colors.black,
-              ...typography.label,
-            }}
-          >
+          <Txt variant="label" color="black" styles={{ marginBottom: '4px' }}>
             {cartItem.product.name}
-          </p>
+          </Txt>
 
-          <p
-            css={{
-              ...typography.title,
-              color: colors.black,
-            }}
-          >
+          <Txt variant="title" color="black">
             {cartItem.product.price.toLocaleString()}원
-          </p>
+          </Txt>
         </div>
 
         <div
@@ -124,14 +114,9 @@ export default function CartItemCard({
           >
             -
           </button>
-          <span
-            css={{
-              color: colors.black,
-              ...typography.label,
-            }}
-          >
+          <Txt variant="label" color="black">
             {cartItem.quantity}
-          </span>
+          </Txt>
           <button
             type="button"
             css={quantityButtonStyle}

@@ -2,6 +2,7 @@ import { isAllCartItemsSelected } from '../../../entities/cart/selector';
 import type { CartItem } from '../../../entities/cart/types';
 import CartItemCard from '../../../entities/cart/ui/CartItemCard';
 import Checkbox from '../../../shared/ui/CheckBox';
+import List from '../../../shared/layout/List';
 import { useCartItemActions } from '../hooks/useCartItemActions';
 import { useCartQuantityActions } from '../hooks/useCartQuantityActions';
 import { useCartSelectionActions } from '../hooks/useCartSelectionActions';
@@ -31,13 +32,7 @@ export default function CartList({ cartItems }: CartListProps) {
         label="전체선택"
         onChange={changeAllCartItemsSelection}
       />
-      <ul
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-        }}
-      >
+      <List>
         {cartItems.map((cartItem) => {
           return (
             <CartItemCard
@@ -50,7 +45,7 @@ export default function CartList({ cartItems }: CartListProps) {
             />
           );
         })}
-      </ul>
+      </List>
     </section>
   );
 }

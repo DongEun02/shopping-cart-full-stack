@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { colors, typography } from '../../../shared/styles/theme';
 import Txt from '../../../shared/ui/Txt';
 
 type CartSectionProps = {
@@ -37,15 +36,9 @@ export default function CartSection({
       }}
     >
       <div>
-        <h1
-          css={{
-            color: colors.black,
-            ...typography.title,
-            marginBottom: '12px',
-          }}
-        >
+        <Txt variant="title" color="black" styles={{ marginBottom: '12px' }}>
           장바구니
-        </h1>
+        </Txt>
         <Txt variant="label" color="text">
           현재 {cartItemsCount}종류의 상품이 담겨있습니다.
         </Txt>

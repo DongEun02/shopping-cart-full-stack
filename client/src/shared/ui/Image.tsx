@@ -1,4 +1,5 @@
 import type { CSSObject } from '@emotion/react';
+import noneImage from '../../assets/no-image.svg';
 
 type ImageProps = {
   src?: string;
@@ -11,7 +12,7 @@ type ImageProps = {
 };
 
 export default function Image({
-  src,
+  src = noneImage,
   alt,
   width,
   height,

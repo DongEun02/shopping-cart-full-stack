@@ -10,7 +10,6 @@ export default function List({ children }: ListProps) {
       css={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '20px',
       }}
     >
       {children}

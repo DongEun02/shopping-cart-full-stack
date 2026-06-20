@@ -17,7 +17,7 @@ import { useCartItems } from './hooks/useCartItems';
 import { useCartMutationError } from './hooks/useCartMutationError';
 import CartList from './ui/CartList';
 import CartSection from './ui/CartSection';
-import OrderSummary from './ui/OrderSummary';
+import CartSummary from './ui/CartSummary';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -91,7 +91,7 @@ export default function CartPage() {
       </Header>
       <CartSection cartItemsCount={cartItems.length}>
         <CartList cartItems={cartItems} />
-        <OrderSummary
+        <CartSummary
           orderAmount={orderAmount}
           deliveryFee={deliveryFee}
           totalAmount={totalAmount}

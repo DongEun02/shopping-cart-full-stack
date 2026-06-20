@@ -4,17 +4,17 @@ import Txt from '../../../shared/ui/Txt';
 import Flex from '../../../shared/layout/Flex';
 import Row from '../../../shared/layout/Row';
 
-type OrderSummaryProps = {
+type CartSummaryProps = {
   orderAmount: number;
   deliveryFee: number;
   totalAmount: number;
 };
 
-export default function OrderSummary({
+export default function CartSummary({
   orderAmount,
   deliveryFee,
   totalAmount,
-}: OrderSummaryProps) {
+}: CartSummaryProps) {
   return (
     <Flex as="section" direction="column" gap={12} styles={{ width: '100%' }}>
       <Flex as="span" gap={4} align="center">

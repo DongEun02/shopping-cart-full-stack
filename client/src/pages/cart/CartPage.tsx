@@ -84,7 +84,11 @@ export default function CartPage() {
         margin: '0 auto',
       }}
     >
-      <Header page="cart" />
+      <Header>
+        <Txt variant="header" color="white">
+          SHOP
+        </Txt>
+      </Header>
       <CartSection cartItemsCount={cartItems.length}>
         <CartList cartItems={cartItems} />
         <OrderSummary

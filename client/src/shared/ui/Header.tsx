@@ -1,29 +1,9 @@
+import type { ReactNode } from 'react';
+
 import { colors } from '../styles/theme';
-import back from '../../assets/back.svg';
-import { useNavigate } from 'react-router-dom';
 import Flex from '../layout/Flex';
-import Image from './Image';
-import Txt from './Txt';
 
-export default function Header({ page }: { page: string }) {
-  const navigate = useNavigate();
-
-  const text =
-    page === 'cart' ? (
-      <Txt variant="header" color="white">
-        SHOP
-      </Txt>
-    ) : (
-      <Image
-        alt="뒤로가기"
-        src={back}
-        width={32}
-        height={32}
-        onClick={() => navigate('/')}
-        styles={{ cursor: 'pointer' }}
-      />
-    );
-
+export default function Header({ children }: { children?: ReactNode }) {
   return (
     <Flex
       as="header"
@@ -35,7 +15,7 @@ export default function Header({ page }: { page: string }) {
         padding: '0 24px',
       }}
     >
-      {text}
+      {children}
     </Flex>
   );
 }

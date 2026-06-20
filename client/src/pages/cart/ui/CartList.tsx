@@ -6,6 +6,7 @@ import List from '../../../shared/layout/List';
 import { useCartItemActions } from '../hooks/useCartItemActions';
 import { useCartQuantityActions } from '../hooks/useCartQuantityActions';
 import { useCartSelectionActions } from '../hooks/useCartSelectionActions';
+import Flex from '../../../shared/layout/Flex';
 
 type CartListProps = {
   cartItems: CartItem[];
@@ -20,13 +21,7 @@ export default function CartList({ cartItems }: CartListProps) {
   const isAllSelected = isAllCartItemsSelected(cartItems);
 
   return (
-    <section
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-      }}
-    >
+    <Flex as="section" direction="column" gap={20}>
       <Checkbox
         checked={isAllSelected}
         label="전체선택"
@@ -46,6 +41,6 @@ export default function CartList({ cartItems }: CartListProps) {
           );
         })}
       </List>
-    </section>
+    </Flex>
   );
 }

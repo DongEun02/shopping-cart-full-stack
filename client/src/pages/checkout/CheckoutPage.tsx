@@ -3,21 +3,21 @@ import { BottomButton } from '../../shared/ui/Button';
 import OrderCheck from './ui/OrderCheck';
 import { colors } from '../../shared/styles/theme';
 import { useNavigate } from 'react-router-dom';
+import Flex from '../../shared/layout/Flex';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
 
   return (
-    <div
-      css={{
+    <Flex
+      direction="column"
+      align="center"
+      justify="center"
+      styles={{
         backgroundColor: colors.white,
         width: '430px',
-        heigth: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
+        height: '100vh',
         margin: '0 auto',
-        alignItems: 'center',
-        justifyContent: 'center',
       }}
     >
       <Header page="checkout" />
@@ -25,6 +25,6 @@ export default function CheckoutPage() {
       <BottomButton disabled onClick={() => navigate('/pay')}>
         결제하기
       </BottomButton>
-    </div>
+    </Flex>
   );
 }

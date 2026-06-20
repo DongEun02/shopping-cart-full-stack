@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import Txt from '../../../shared/ui/Txt';
+import Flex from '../../../shared/layout/Flex';
 
 type CartSectionProps = {
   cartItemsCount: number;
@@ -24,26 +25,26 @@ export default function CartSection({
   }
 
   return (
-    <section
-      css={{
+    <Flex
+      as="section"
+      direction="column"
+      gap={36}
+      styles={{
         height: '75vh',
         overflowY: 'scroll',
         width: '100%',
         padding: '0 24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '36px',
       }}
     >
-      <div>
-        <Txt variant="title" color="black" styles={{ marginBottom: '12px' }}>
+      <Flex direction="column" gap={12}>
+        <Txt variant="title" color="black">
           장바구니
         </Txt>
         <Txt variant="label" color="text">
           현재 {cartItemsCount}종류의 상품이 담겨있습니다.
         </Txt>
-      </div>
+      </Flex>
       {children}
-    </section>
+    </Flex>
   );
 }

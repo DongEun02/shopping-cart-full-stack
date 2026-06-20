@@ -8,6 +8,7 @@ import {
 } from '../../entities/cart/calculate';
 import { getSelectedCartItems } from '../../entities/cart/selector';
 import { colors } from '../../shared/styles/theme';
+import Flex from '../../shared/layout/Flex';
 import { BottomButton } from '../../shared/ui/Button';
 import Header from '../../shared/ui/Header';
 import Spinner from '../../shared/ui/Spinner';
@@ -37,53 +38,50 @@ export default function CartPage() {
 
   if (isLoading) {
     return (
-      <div
-        css={{
+      <Flex
+        align="center"
+        justify="center"
+        styles={{
           backgroundColor: colors.white,
           width: '430px',
           minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           margin: '0 auto',
         }}
       >
         <Spinner />
-      </div>
+      </Flex>
     );
   }
 
   if (error) {
     return (
-      <div
-        css={{
+      <Flex
+        align="center"
+        justify="center"
+        styles={{
           backgroundColor: colors.white,
           width: '430px',
           minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           margin: '0 auto',
         }}
       >
         <Txt variant="label" color="error">
           {error.message}
         </Txt>
-      </div>
+      </Flex>
     );
   }
 
   return (
-    <div
-      css={{
+    <Flex
+      direction="column"
+      gap={36}
+      align="center"
+      styles={{
         backgroundColor: colors.white,
         width: '430px',
         minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
         margin: '0 auto',
-        alignItems: 'center',
-        gap: '36px',
       }}
     >
       <Header page="cart" />
@@ -108,6 +106,6 @@ export default function CartPage() {
       >
         주문 확인
       </BottomButton>
-    </div>
+    </Flex>
   );
 }

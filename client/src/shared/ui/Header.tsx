@@ -1,6 +1,7 @@
 import { colors } from '../styles/theme';
 import back from '../../assets/back.svg';
 import { useNavigate } from 'react-router-dom';
+import Flex from '../layout/Flex';
 import Txt from './Txt';
 
 export default function Header({ page }: { page: string }) {
@@ -23,17 +24,17 @@ export default function Header({ page }: { page: string }) {
     );
 
   return (
-    <header
-      css={{
+    <Flex
+      as="header"
+      align="center"
+      styles={{
         backgroundColor: colors.black,
         height: '64px',
         width: '100%',
         padding: '0 24px',
-        display: 'flex',
-        alignItems: 'center',
       }}
     >
       {text}
-    </header>
+    </Flex>
   );
 }

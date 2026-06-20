@@ -1,20 +1,17 @@
+import type { ReactNode } from 'react';
 import checkedIcon from '../../assets/active-check.svg';
 import uncheckedIcon from '../../assets/inactive-check.svg';
 import Image from './Image';
-import Txt from './Txt';
-import { typography } from '../styles/theme';
 
 type CheckboxProps = {
-  variant?: keyof typeof typography;
   checked: boolean;
-  label?: string;
+  children?: ReactNode;
   onChange: (checked: boolean) => void;
 };
 
 export default function Checkbox({
-  variant = 'label',
   checked,
-  label,
+  children,
   onChange,
 }: CheckboxProps) {
   return (
@@ -43,11 +40,7 @@ export default function Checkbox({
         width={24}
         height={24}
       />
-      {label && (
-        <Txt variant={variant} color="text">
-          {label}
-        </Txt>
-      )}
+      {children}
     </label>
   );
 }

@@ -136,7 +136,7 @@ export function CouponButton({
         borderRadius: '5px',
         backgroundColor: background,
         color: color,
-        ...typography.couponButton,
+        ...typography.coupon,
       }}
     >
       {children}

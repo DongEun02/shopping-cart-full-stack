@@ -7,6 +7,7 @@ import { useCartItemActions } from '../hooks/useCartItemActions';
 import { useCartQuantityActions } from '../hooks/useCartQuantityActions';
 import { useCartSelectionActions } from '../hooks/useCartSelectionActions';
 import Flex from '../../../shared/layout/Flex';
+import Txt from '../../../shared/ui/Txt';
 
 type CartListProps = {
   cartItems: CartItem[];
@@ -24,9 +25,12 @@ export default function CartList({ cartItems }: CartListProps) {
     <Flex as="section" direction="column" gap={20}>
       <Checkbox
         checked={isAllSelected}
-        label="전체선택"
         onChange={changeAllCartItemsSelection}
-      />
+      >
+        <Txt variant="label" color="text">
+          전체선택
+        </Txt>
+      </Checkbox>
       <List>
         {cartItems.map((cartItem) => {
           return (

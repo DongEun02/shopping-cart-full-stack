@@ -56,7 +56,7 @@ export const typography = {
     letterSpacing: '0',
   },
 
-  couponButton: {
+  coupon: {
     fontWeight: '700',
     fontSize: '15px',
     leadingTrim: 'NONE',

@@ -23,7 +23,7 @@ const font = {
     ...typography.modal,
   },
   coupon: {
-    ...typography.couponButton,
+    ...typography.coupon,
   },
 };
 

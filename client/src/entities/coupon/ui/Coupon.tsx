@@ -19,11 +19,13 @@ export default function Coupon() {
         left={
           <Flex direction="column" gap={12}>
             <Checkbox
-              variant="button"
               checked={true}
-              label="5,000원 할인 쿠폰"
               onChange={handleSelectedCoupon}
-            />
+            >
+              <Txt variant="button" color="text">
+                5,000원 할인 쿠폰
+              </Txt>
+            </Checkbox>
             <Txt variant="label" color="text">
               만료일: 2024년 11월 30일 <br />
               최소 주문 금액: 100,000원

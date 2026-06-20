@@ -13,10 +13,13 @@ export default function Area() {
         배송 정보
       </Txt>
       <Checkbox
-        label="제주도 및 도서 산간 지역"
         checked={false}
         onChange={handleRemoteArea}
-      />
+      >
+        <Txt variant="label" color="text">
+          제주도 및 도서 산간 지역
+        </Txt>
+      </Checkbox>
     </Flex>
   );
 }

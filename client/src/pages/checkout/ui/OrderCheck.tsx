@@ -30,10 +30,10 @@ export default function OrderCheck() {
       }}
     >
       <Txt variant="title" color="text">
-        주문 확인
+        결제 확인
       </Txt>
       <Txt variant="label" color="text" styles={{ textAlign: 'center' }}>
-        총 {cartItems.length}종류의 상품 {itemCount}개를 주문합니다. <br />
+        총 {cartItems.length}종류의 상품 {itemCount}개를 주문했습니다. <br />
         최종 결제 금액을 확인해 주세요.
       </Txt>
       <Flex direction="column" gap={12} align="center">

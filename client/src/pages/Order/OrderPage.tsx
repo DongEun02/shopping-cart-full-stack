@@ -1,4 +1,3 @@
-import { colors } from '../../shared/styles/theme';
 import Flex from '../../shared/layout/Flex';
 import Header from '../../shared/ui/Header';
 import Image from '../../shared/ui/Image';
@@ -8,6 +7,10 @@ import OrderList from './ui/OrderList';
 import Modal from './ui/Modal';
 import { BottomButton, CouponButton } from '../../shared/ui/Button';
 import OrderSummary from './ui/OrderSummary';
+import Area from './ui/Area';
+
+import { colors } from '../../shared/styles/theme';
+
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -51,6 +54,7 @@ export default function OrderPage() {
         <CouponButton isInModal={false} onClick={handleModal}>
           쿠폰 적용
         </CouponButton>
+        <Area />
         <OrderSummary />
       </OrderSection>
 

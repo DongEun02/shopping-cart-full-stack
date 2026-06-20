@@ -110,3 +110,36 @@ export function DeleteButton({ children, onClick }: DeleteButtonProps) {
     </BaseButton>
   );
 }
+
+type CouponButtonProps = {
+  children: ReactNode;
+  onClick: () => void;
+  isInModal: boolean;
+};
+
+export function CouponButton({
+  children,
+  onClick,
+  isInModal,
+}: CouponButtonProps) {
+  const border = isInModal ? 'none' : '1px solid #33333340';
+  const color = isInModal ? colors.white : colors.grey;
+  const background = isInModal ? '#333333' : 'transparent';
+
+  return (
+    <BaseButton
+      onClick={onClick}
+      styles={{
+        width: '100%',
+        height: '48px',
+        border: border,
+        borderRadius: '5px',
+        backgroundColor: background,
+        color: color,
+        ...typography.couponButton,
+      }}
+    >
+      {children}
+    </BaseButton>
+  );
+}

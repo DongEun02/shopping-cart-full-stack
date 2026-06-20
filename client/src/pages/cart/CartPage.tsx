@@ -99,14 +99,7 @@ export default function CartPage() {
       </CartSection>
       <BottomButton
         disabled={selectedItems.length === 0}
-        onClick={() =>
-          navigate('checkout', {
-            state: {
-              cartItems: selectedItems,
-              totalAmount,
-            },
-          })
-        }
+        onClick={() => navigate('/order')}
       >
         주문 확인
       </BottomButton>

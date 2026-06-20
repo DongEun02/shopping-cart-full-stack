@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { colors, typography } from '../styles/theme';
+import type { CSSObject } from '@emotion/react';
 
 const font = {
   header: {
@@ -28,7 +29,7 @@ export default function Txt({
 }: {
   variant: keyof typeof typography;
   color: keyof typeof colors;
-  styles?: React.CSSProperties;
+  styles?: CSSObject;
   children: ReactNode;
 }) {
   return (

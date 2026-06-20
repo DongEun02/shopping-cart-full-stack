@@ -19,6 +19,12 @@ const font = {
   info: {
     ...typography.info,
   },
+  modal: {
+    ...typography.modal,
+  },
+  coupon: {
+    ...typography.couponButton,
+  },
 };
 
 export default function Txt({

@@ -2,14 +2,21 @@ import checkedIcon from '../../assets/active-check.svg';
 import uncheckedIcon from '../../assets/inactive-check.svg';
 import Image from './Image';
 import Txt from './Txt';
+import { typography } from '../styles/theme';
 
 type CheckboxProps = {
+  variant?: keyof typeof typography;
   checked: boolean;
   label?: string;
   onChange: (checked: boolean) => void;
 };
 
-export default function Checkbox({ checked, label, onChange }: CheckboxProps) {
+export default function Checkbox({
+  variant = 'label',
+  checked,
+  label,
+  onChange,
+}: CheckboxProps) {
   return (
     <label
       css={{
@@ -37,7 +44,7 @@ export default function Checkbox({ checked, label, onChange }: CheckboxProps) {
         height={24}
       />
       {label && (
-        <Txt variant="label" color="text">
+        <Txt variant={variant} color="text">
           {label}
         </Txt>
       )}

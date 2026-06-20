@@ -16,27 +16,13 @@ export default function OrderSummary({
   totalAmount,
 }: OrderSummaryProps) {
   return (
-    <Flex
-      as="section"
-      direction="column"
-      gap={12}
-      styles={{ width: '100%' }}
-    >
-      <Txt
-        variant="label"
-        color="text"
-      >
-        <Flex as="span" gap={4} align="center">
-          <Image
-            src={info}
-            alt=""
-            ariaHidden
-            width={16}
-            height={16}
-          />
-          <span>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</span>
-        </Flex>
-      </Txt>
+    <Flex as="section" direction="column" gap={12} styles={{ width: '100%' }}>
+      <Flex as="span" gap={4} align="center">
+        <Image src={info} alt="" ariaHidden width={16} height={16} />
+        <Txt variant="label" color="text">
+          총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
+        </Txt>
+      </Flex>
 
       <Flex direction="column" gap={20} styles={{ width: '100%' }}>
         <div

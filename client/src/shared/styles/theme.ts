@@ -4,6 +4,7 @@ export const colors = {
   text: '#0A0D13',
   inactive: '#BEBEBE',
   error: '#ff0000',
+  grey: '#333333BF',
 };
 
 export const typography = {
@@ -44,6 +45,22 @@ export const typography = {
     fontSize: '16px',
     leadingTrim: 'NONE',
     lineHeight: '16px',
+    letterSpacing: '0',
+  },
+
+  modal: {
+    fontWeight: '700',
+    fontSize: '18px',
+    leadingTrim: 'NONE',
+    lineHeight: '100%',
+    letterSpacing: '0',
+  },
+
+  couponButton: {
+    fontWeight: '700',
+    fontSize: '15px',
+    leadingTrim: 'NONE',
+    lineHeight: '100%',
     letterSpacing: '0',
   },
 };

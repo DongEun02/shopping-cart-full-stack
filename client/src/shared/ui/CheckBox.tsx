@@ -1,5 +1,6 @@
 import checkedIcon from '../../assets/active-check.svg';
 import uncheckedIcon from '../../assets/inactive-check.svg';
+import Image from './Image';
 import Txt from './Txt';
 
 type CheckboxProps = {
@@ -28,10 +29,10 @@ export default function Checkbox({ checked, label, onChange }: CheckboxProps) {
           pointerEvents: 'none',
         }}
       />
-      <img
+      <Image
         src={checked ? checkedIcon : uncheckedIcon}
         alt=""
-        aria-hidden="true"
+        ariaHidden
         width={24}
         height={24}
       />

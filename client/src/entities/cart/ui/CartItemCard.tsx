@@ -1,4 +1,5 @@
 import CheckBox from '../../../shared/ui/CheckBox';
+import Image from '../../../shared/ui/Image';
 import Txt from '../../../shared/ui/Txt';
 import { DeleteButton, QuantityButton } from '../../../shared/ui/Button';
 import Row from '../../../shared/layout/Row';
@@ -34,12 +35,12 @@ export default function CartItemCard({
               checked={cartItem.isSelected}
               onChange={(checked) => onToggleItem(cartItem.product.id, checked)}
             />
-            <img
-              css={{ borderRadius: '8px' }}
+            <Image
               src={cartItem.product.image ?? undefined}
               width={112}
               height={112}
               alt="상품 이미지"
+              styles={{ borderRadius: '8px' }}
             />
           </Flex>
         }

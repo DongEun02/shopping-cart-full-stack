@@ -1,4 +1,5 @@
 import info from '../../../assets/Info-outline.svg';
+import Image from '../../../shared/ui/Image';
 import Txt from '../../../shared/ui/Txt';
 import Flex from '../../../shared/layout/Flex';
 import Row from '../../../shared/layout/Row';
@@ -26,7 +27,13 @@ export default function OrderSummary({
         color="text"
       >
         <Flex as="span" gap={4} align="center">
-          <img src={info} alt="" width={16} height={16} />
+          <Image
+            src={info}
+            alt=""
+            ariaHidden
+            width={16}
+            height={16}
+          />
           <span>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</span>
         </Flex>
       </Txt>

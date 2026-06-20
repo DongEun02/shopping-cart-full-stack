@@ -7,7 +7,7 @@ import OrderSection from './ui/OrderSection';
 import OrderList from './ui/OrderList';
 import Modal from './ui/Modal';
 import { BottomButton, CouponButton } from '../../shared/ui/Button';
-
+import OrderSummary from './ui/OrderSummary';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -51,7 +51,9 @@ export default function OrderPage() {
         <CouponButton isInModal={false} onClick={handleModal}>
           쿠폰 적용
         </CouponButton>
+        <OrderSummary />
       </OrderSection>
+
       <BottomButton onClick={() => navigate('/payment-checkout')}>
         결제하기
       </BottomButton>

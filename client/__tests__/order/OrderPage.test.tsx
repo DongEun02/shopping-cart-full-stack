@@ -134,4 +134,91 @@ describe('OrderPage', () => {
       alertSpy.mockRestore();
     }
   });
+
+  test('쿠폰 적용 버튼을 누르면 쿠폰 목록을 조회하고 기존 선택 상태를 표시한다.', async () => {
+    renderOrderPage();
+
+    await screen.findByText('상품이름A');
+    fireEvent.click(screen.getByRole('button', { name: '쿠폰 적용' }));
+
+    expect(await screen.findByText('5,000원 할인 쿠폰')).toBeInTheDocument();
+    expect(
+      screen.getByRole('checkbox', { name: '5,000원 할인 쿠폰' }),
+    ).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: '2개 구매 시 1개 무료 쿠폰' }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('checkbox', {
+        name: '미라클모닝 30% 할인 쿠폰',
+      }),
+    ).toBeDisabled();
+  });
+
+  test('쿠폰 선택을 변경하면 할인 금액을 계산해 모달 버튼에 표시한다.', async () => {
+    let requestBody: unknown;
+
+    server.use(
+      http.post('/orders/:id/coupons/discount', async ({ request }) => {
+        requestBody = await request.json();
+
+        return HttpResponse.json({ discountAmount: 10000 });
+      }),
+    );
+
+    renderOrderPage();
+
+    await screen.findByText('상품이름A');
+    fireEvent.click(screen.getByRole('button', { name: '쿠폰 적용' }));
+
+    const freeShippingCoupon = await screen.findByRole('checkbox', {
+      name: '5만원 이상 구매 시 무료 배송 쿠폰',
+    });
+    fireEvent.click(freeShippingCoupon);
+
+    await waitFor(() => {
+      expect(requestBody).toEqual({
+        coupons: ['FIXED5000', 'FREESHIPPING'],
+      });
+      expect(
+        screen.getByRole('button', {
+          name: '총 10,000원 할인 쿠폰 사용하기',
+        }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('쿠폰 사용하기를 누르면 선택 쿠폰을 주문에 적용하고 모달을 닫는다.', async () => {
+    let requestBody: unknown;
+
+    server.use(
+      http.patch('/orders/:id/coupons', async ({ request }) => {
+        requestBody = await request.json();
+
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+
+    renderOrderPage();
+
+    await screen.findByText('상품이름A');
+    fireEvent.click(screen.getByRole('button', { name: '쿠폰 적용' }));
+
+    const applyButton = await screen.findByRole('button', {
+      name: '총 5,000원 할인 쿠폰 사용하기',
+    });
+
+    await waitFor(() => {
+      expect(applyButton).toBeEnabled();
+    });
+
+    fireEvent.click(applyButton);
+
+    await waitFor(() => {
+      expect(requestBody).toEqual({ coupons: ['FIXED5000'] });
+      expect(
+        screen.queryByText('쿠폰을 선택해 주세요'),
+      ).not.toBeInTheDocument();
+    });
+  });
 });

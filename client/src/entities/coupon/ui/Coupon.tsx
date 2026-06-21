@@ -2,11 +2,17 @@ import Row from '../../../shared/layout/Row';
 import Checkbox from '../../../shared/ui/CheckBox';
 import Txt from '../../../shared/ui/Txt';
 import Flex from '../../../shared/layout/Flex';
+import type { Coupon as CouponType } from '../types';
+import { formatDueDate } from '../format';
 
-export default function Coupon() {
-  const handleSelectedCoupon = () => {
-    // 쿠폰 선택 api 호출
-  };
+type CouponProps = {
+  coupon: CouponType;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+};
+
+export default function Coupon({ coupon, checked, onChange }: CouponProps) {
+  const color = coupon.isDisabled ? 'inactive' : 'text';
 
   return (
     <li
@@ -19,16 +25,29 @@ export default function Coupon() {
         left={
           <Flex direction="column" gap={12}>
             <Checkbox
-              checked={true}
-              onChange={handleSelectedCoupon}
+              checked={checked}
+              disabled={coupon.isDisabled}
+              onChange={onChange}
             >
-              <Txt variant="button" color="text">
-                5,000원 할인 쿠폰
+              <Txt variant="button" color={color}>
+                {coupon.name}
               </Txt>
             </Checkbox>
-            <Txt variant="label" color="text">
-              만료일: 2024년 11월 30일 <br />
-              최소 주문 금액: 100,000원
+            <Txt variant="label" color={color}>
+              만료일: {formatDueDate(coupon.dueDate)}
+              {coupon.minOrderAmount !== undefined && (
+                <>
+                  <br />
+                  최소 주문 금액: {coupon.minOrderAmount.toLocaleString()}원
+                </>
+              )}
+              {coupon.availableTime && (
+                <>
+                  <br />
+                  사용 가능 시간: {coupon.availableTime.startTime}부터{' '}
+                  {coupon.availableTime.endTime}까지
+                </>
+              )}
             </Txt>
           </Flex>
         }

@@ -113,12 +113,14 @@ export function DeleteButton({ children, onClick }: DeleteButtonProps) {
 
 type CouponButtonProps = {
   children: ReactNode;
+  disabled?: boolean;
   onClick: () => void;
   isInModal: boolean;
 };
 
 export function CouponButton({
   children,
+  disabled = false,
   onClick,
   isInModal,
 }: CouponButtonProps) {
@@ -128,6 +130,7 @@ export function CouponButton({
 
   return (
     <BaseButton
+      disabled={disabled}
       onClick={onClick}
       styles={{
         width: '100%',
@@ -135,7 +138,7 @@ export function CouponButton({
         flexShrink: 0,
         border: border,
         borderRadius: '5px',
-        backgroundColor: background,
+        backgroundColor: disabled ? colors.inactive : background,
         color: color,
         ...typography.coupon,
       }}

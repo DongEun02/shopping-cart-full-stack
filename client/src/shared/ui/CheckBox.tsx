@@ -6,12 +6,14 @@ import Image from './Image';
 type CheckboxProps = {
   checked: boolean;
   children?: ReactNode;
+  disabled?: boolean;
   onChange: (checked: boolean) => void;
 };
 
 export default function Checkbox({
   checked,
   children,
+  disabled = false,
   onChange,
 }: CheckboxProps) {
   return (
@@ -20,12 +22,13 @@ export default function Checkbox({
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
       }}
     >
       <input
         type="checkbox"
         checked={checked}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.checked)}
         css={{
           position: 'absolute',

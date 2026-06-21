@@ -18,6 +18,8 @@ import {
 } from '../../entities/order/api/orderApi';
 import type { Order } from '../../entities/order/types';
 import { setQueryData, useQuery } from '../../shared/hooks/useQuery';
+import { updateOrderCoupons } from '../../entities/coupon/api/couponApi';
+import type { CouponCode } from '../../entities/coupon/types';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
@@ -38,8 +40,21 @@ export default function OrderPage() {
     setIsModalOpen((prev) => !prev);
   };
 
-  const submitCoupon = () => {
-    setIsModalOpen(false);
+  const submitCoupon = async (couponCodes: CouponCode[]) => {
+    try {
+      await updateOrderCoupons(id, couponCodes);
+      const nextOrder = await fetchOrder(id);
+
+      setUpdatedOrder(nextOrder);
+      setQueryData<Order>(`order:${id}`, () => nextOrder);
+      setIsModalOpen(false);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : '알 수 없는 에러가 발생했습니다.',
+      );
+    }
   };
 
   const handleRemoteArea = async (isRemoteArea: boolean) => {
@@ -158,7 +173,12 @@ export default function OrderPage() {
               zIndex: 1,
             }}
           />
-          <Modal onClick={handleModal} onSubmit={submitCoupon} />
+          <Modal
+            orderId={id}
+            initialDiscountAmount={displayedOrder.amount.discountAmount}
+            onClose={handleModal}
+            onSubmit={submitCoupon}
+          />
         </>
       )}
     </Flex>

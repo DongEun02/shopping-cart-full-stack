@@ -105,6 +105,66 @@ export const handlers = [
     });
   }),
 
+  http.get('/orders/:id/coupons', () => {
+    return HttpResponse.json([
+      {
+        id: 'FIXED5000',
+        isSelected: true,
+        isDisabled: false,
+        name: '5,000원 할인 쿠폰',
+        dueDate: '2026-11-30',
+        minOrderAmount: 100000,
+      },
+      {
+        id: 'BOGO',
+        isSelected: false,
+        isDisabled: true,
+        name: '2개 구매 시 1개 무료 쿠폰',
+        dueDate: '2026-06-30',
+      },
+      {
+        id: 'FREESHIPPING',
+        isSelected: false,
+        isDisabled: false,
+        name: '5만원 이상 구매 시 무료 배송 쿠폰',
+        dueDate: '2026-08-31',
+        minOrderAmount: 50000,
+      },
+      {
+        id: 'MIRACLESALE',
+        isSelected: false,
+        isDisabled: true,
+        name: '미라클모닝 30% 할인 쿠폰',
+        dueDate: '2026-07-31',
+        availableTime: {
+          startTime: '04:00',
+          endTime: '07:00',
+        },
+      },
+    ]);
+  }),
+
+  http.post('/orders/:id/coupons/discount', async ({ request }) => {
+    const body = (await request.json()) as { coupons?: string[] };
+
+    return HttpResponse.json({
+      discountAmount: (body.coupons?.length ?? 0) * 5000,
+    });
+  }),
+
+  http.patch('/orders/:id/coupons', async ({ request }) => {
+    const body = (await request.json()) as { coupons?: string[] };
+
+    if (!Array.isArray(body.coupons)) {
+      return HttpResponse.json(
+        { message: '유효하지 않은 형식입니다.' },
+        { status: 400 },
+      );
+    }
+
+    return new HttpResponse(null, { status: 204 });
+  }),
+
   http.patch('/orders/:id', async ({ request }) => {
     const body = (await request.json()) as { isRemoteArea?: boolean };
 

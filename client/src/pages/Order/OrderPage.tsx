@@ -12,14 +12,20 @@ import Spinner from '../../shared/ui/Spinner';
 import Txt from '../../shared/ui/Txt';
 
 import { colors } from '../../shared/styles/theme';
-import { fetchOrder } from '../../entities/order/api/orderApi';
-import { useQuery } from '../../shared/hooks/useQuery';
+import {
+  fetchOrder,
+  updateOrderRemoteArea,
+} from '../../entities/order/api/orderApi';
+import type { Order } from '../../entities/order/types';
+import { setQueryData, useQuery } from '../../shared/hooks/useQuery';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 
 export default function OrderPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [updatedOrder, setUpdatedOrder] = useState<Order | null>(null);
+  const [isUpdatingRemoteArea, setIsUpdatingRemoteArea] = useState(false);
   const navigate = useNavigate();
   const { id = '' } = useParams();
   const {
@@ -34,6 +40,28 @@ export default function OrderPage() {
 
   const submitCoupon = () => {
     setIsModalOpen(false);
+  };
+
+  const handleRemoteArea = async (isRemoteArea: boolean) => {
+    if (isUpdatingRemoteArea) return;
+
+    setIsUpdatingRemoteArea(true);
+
+    try {
+      await updateOrderRemoteArea(id, isRemoteArea);
+      const nextOrder = await fetchOrder(id);
+
+      setUpdatedOrder(nextOrder);
+      setQueryData<Order>(`order:${id}`, () => nextOrder);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : '알 수 없는 에러가 발생했습니다.',
+      );
+    } finally {
+      setIsUpdatingRemoteArea(false);
+    }
   };
 
   if (isLoading) {
@@ -72,7 +100,8 @@ export default function OrderPage() {
     );
   }
 
-  const productCount = order.products.reduce((total, product) => {
+  const displayedOrder = updatedOrder ?? order;
+  const productCount = displayedOrder.products.reduce((total, product) => {
     return total + product.quantity;
   }, 0);
 
@@ -100,15 +129,18 @@ export default function OrderPage() {
         />
       </Header>
       <OrderSection
-        productTypeCount={order.products.length}
+        productTypeCount={displayedOrder.products.length}
         productCount={productCount}
       >
-        <OrderList products={order.products} />
+        <OrderList products={displayedOrder.products} />
         <CouponButton isInModal={false} onClick={handleModal}>
           쿠폰 적용
         </CouponButton>
-        <Area isRemoteArea={order.isRemoteArea} />
-        <OrderSummary amount={order.amount} />
+        <Area
+          isRemoteArea={displayedOrder.isRemoteArea}
+          onChange={handleRemoteArea}
+        />
+        <OrderSummary amount={displayedOrder.amount} />
       </OrderSection>
 
       <BottomButton onClick={() => navigate('/payment-checkout')}>

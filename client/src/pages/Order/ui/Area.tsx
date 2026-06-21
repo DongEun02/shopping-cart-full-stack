@@ -4,13 +4,10 @@ import Txt from '../../../shared/ui/Txt';
 
 type AreaProps = {
   isRemoteArea: boolean;
+  onChange: (isRemoteArea: boolean) => void;
 };
 
-export default function Area({ isRemoteArea }: AreaProps) {
-  const handleRemoteArea = () => {
-    // 도서 산간 지역 api
-  };
-
+export default function Area({ isRemoteArea, onChange }: AreaProps) {
   return (
     <Flex direction="column" gap={16}>
       <Txt variant="button" color="text">
@@ -18,7 +15,7 @@ export default function Area({ isRemoteArea }: AreaProps) {
       </Txt>
       <Checkbox
         checked={isRemoteArea}
-        onChange={handleRemoteArea}
+        onChange={onChange}
       >
         <Txt variant="label" color="text">
           제주도 및 도서 산간 지역

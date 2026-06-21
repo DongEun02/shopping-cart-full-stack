@@ -32,3 +32,20 @@ export async function fetchOrder(id: string): Promise<Order> {
 
   return response.json();
 }
+
+export async function updateOrderRemoteArea(
+  id: string,
+  isRemoteArea: boolean,
+) {
+  const response = await fetch(`${API_BASE_URL}/orders/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ isRemoteArea }),
+  });
+
+  if (!response.ok) {
+    throw new Error('배송 정보를 변경하지 못했습니다.');
+  }
+}

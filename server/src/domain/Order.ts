@@ -9,6 +9,7 @@ export default class Order {
   private shippingFee: number = 0;
   private totalAmount: number = 0;
   private selectedCouponCodes: CouponCode[] = [];
+  private isCouponSelectionConfirmed: boolean = false;
 
   createOrder(products: OrderProduct[]) {
     this.orderProducts = products;
@@ -53,6 +54,14 @@ export default class Order {
 
   getSelectedCouponCodes() {
     return this.selectedCouponCodes;
+  }
+
+  confirmCouponSelection() {
+    this.isCouponSelectionConfirmed = true;
+  }
+
+  hasConfirmedCouponSelection() {
+    return this.isCouponSelectionConfirmed;
   }
 
   setRemoteArea(isRemoteArea: boolean) {

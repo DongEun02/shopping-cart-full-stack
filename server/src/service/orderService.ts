@@ -227,6 +227,7 @@ export function updateOrderCoupons(
   const selectedCoupons = findCoupons(couponCodes);
 
   applySelectedCouponsToOrder(order, selectedCoupons, currentDate);
+  order.confirmCouponSelection();
 
   return order.getOrder();
 }
@@ -234,10 +235,14 @@ export function updateOrderCoupons(
 export function updateOrderRemoteArea(orderId: OrderId, isRemoteArea: boolean) {
   const currentDate = new Date();
   const order = findOrder(orderId);
-  const selectedCoupons = findCoupons(order.getSelectedCouponCodes());
 
   order.setRemoteArea(isRemoteArea);
-  applySelectedCouponsToOrder(order, selectedCoupons, currentDate);
+
+  if (order.hasConfirmedCouponSelection()) {
+    return order.getOrder();
+  }
+
+  applyBestAvailableCouponsToOrder(order, currentDate);
 
   return order.getOrder();
 }

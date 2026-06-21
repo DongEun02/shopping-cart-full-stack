@@ -43,4 +43,15 @@ describe('주문서 도메인 테스트', () => {
 
     expect(orderData.amount.shippingFee).toBe(6000);
   });
+
+  test('사용자가 쿠폰 선택을 확정했는지 저장한다.', () => {
+    const newOrder = new Order();
+    newOrder.createOrder(data);
+
+    expect(newOrder.hasConfirmedCouponSelection()).toBe(false);
+
+    newOrder.confirmCouponSelection();
+
+    expect(newOrder.hasConfirmedCouponSelection()).toBe(true);
+  });
 });

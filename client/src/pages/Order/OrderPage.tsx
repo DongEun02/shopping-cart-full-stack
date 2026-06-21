@@ -24,7 +24,7 @@ export default function OrderPage() {
   const navigate = useNavigate();
   const {
     order,
-    isLoading,
+    isPending,
     error,
     isModalOpen,
   } = useOrder();
@@ -38,7 +38,7 @@ export default function OrderPage() {
     alert(mutationError.message);
   }, [mutationError]);
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Flex
         align="center"

@@ -3,7 +3,7 @@ import { useOrderContext } from '../contexts/OrderContext';
 export function useOrder() {
   const {
     order,
-    isLoading,
+    isPending,
     error,
     isModalOpen,
     coupons,
@@ -14,7 +14,7 @@ export function useOrder() {
 
   return {
     order,
-    isLoading,
+    isPending,
     error,
     isModalOpen,
     coupons,

@@ -19,7 +19,7 @@ export function useOrderCoupons() {
   ].join(':');
   const {
     data: fetchedCoupons,
-    isLoading,
+    isPending,
     error,
   } = useQuery(queryKey, () => fetchCoupons(orderId));
 
@@ -30,7 +30,7 @@ export function useOrderCoupons() {
   }, [fetchedCoupons, dispatchOrderAction]);
 
   return {
-    isLoading: isLoading || (!!fetchedCoupons && coupons !== fetchedCoupons),
+    isPending: isPending || (!!fetchedCoupons && coupons !== fetchedCoupons),
     error,
   };
 }

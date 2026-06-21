@@ -27,11 +27,15 @@ export default function CartProvider({
 
   const {
     data: fetchedCartItems,
-    isLoading,
+    isPending,
     error,
   } = useQuery('cartItems', fetchItems);
 
-  const { mutate, isMutationLoading, error: mutationError } = useMutation();
+  const {
+    mutate,
+    isPending: isMutationLoading,
+    error: mutationError,
+  } = useMutation();
 
   const dispatchCartAction = (action: CartAction) => {
     dispatch(action);
@@ -50,7 +54,7 @@ export default function CartProvider({
     <CartContext.Provider
       value={{
         cartItems,
-        isLoading,
+        isPending,
         error,
         mutationError,
         isMutationLoading,

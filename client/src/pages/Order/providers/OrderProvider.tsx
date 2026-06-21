@@ -40,10 +40,14 @@ export default function OrderProvider({
   const [state, dispatch] = useReducer(orderReducer, initialOrderState);
   const {
     data: fetchedOrder,
-    isLoading,
+    isPending,
     error,
   } = useQuery(`order:${orderId}`, () => fetchOrder(orderId));
-  const { mutate, isMutationLoading, error: mutationError } = useMutation();
+  const {
+    mutate,
+    isPending: isMutationLoading,
+    error: mutationError,
+  } = useMutation();
 
   const dispatchOrderAction = useCallback((action: OrderAction) => {
     dispatch(action);
@@ -64,7 +68,7 @@ export default function OrderProvider({
       value={{
         ...state,
         orderId,
-        isLoading,
+        isPending,
         error,
         mutationError,
         isMutationLoading,

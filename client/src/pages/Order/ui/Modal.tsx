@@ -24,7 +24,7 @@ export default function Modal({ onClose }: ModalProps) {
     couponDiscountAmount,
     isMutationLoading,
   } = useOrder();
-  const { isLoading, error } = useOrderCoupons();
+  const { isPending, error } = useOrderCoupons();
   const { changeCouponSelection, submitCoupons } = useCouponActions();
 
   return (
@@ -72,13 +72,13 @@ export default function Modal({ onClose }: ModalProps) {
           justify="center"
           styles={{ flex: 1, minHeight: 0, overflowY: 'auto' }}
         >
-          {isLoading && <Spinner />}
+          {isPending && <Spinner />}
           {error && (
             <Txt variant="label" color="error">
               {error.message}
             </Txt>
           )}
-          {!isLoading && !error && (
+          {!isPending && !error && (
             <List>
               {coupons.map((coupon) => (
                 <Coupon
@@ -96,7 +96,7 @@ export default function Modal({ onClose }: ModalProps) {
       </Flex>
       <CouponButton
         isInModal={true}
-        disabled={isLoading || !!error || isMutationLoading}
+        disabled={isPending || !!error || isMutationLoading}
         onClick={submitCoupons}
       >
         총 {couponDiscountAmount.toLocaleString()}원 할인 쿠폰 사용하기

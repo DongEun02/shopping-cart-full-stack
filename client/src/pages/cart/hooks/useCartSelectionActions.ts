@@ -20,17 +20,22 @@ export function useCartSelectionActions() {
 
     try {
       dispatchCartAction(action);
-      await mutate(() => updateItemSelection(id, checked));
-
-      setQueryData<CartItem[]>('cartItems', (items) =>
-        cartReducer(items, action),
-      );
-    } catch {
-      dispatchCartAction({
-        type: 'CHANGE_ITEM_SELECTION',
-        id,
-        checked: currentItem.isSelected,
+      await mutate(() => updateItemSelection(id, checked), {
+        onSuccess: () => {
+          setQueryData<CartItem[]>('cartItems', (items) =>
+            cartReducer(items, action),
+          );
+        },
+        onError: () => {
+          dispatchCartAction({
+            type: 'CHANGE_ITEM_SELECTION',
+            id,
+            checked: currentItem.isSelected,
+          });
+        },
       });
+    } catch {
+      return;
     }
   };
 
@@ -40,13 +45,18 @@ export function useCartSelectionActions() {
 
     try {
       dispatchCartAction(action);
-      await mutate(() => updateAllItemsSelection(checked));
-
-      setQueryData<CartItem[]>('cartItems', (items) =>
-        cartReducer(items, action),
-      );
+      await mutate(() => updateAllItemsSelection(checked), {
+        onSuccess: () => {
+          setQueryData<CartItem[]>('cartItems', (items) =>
+            cartReducer(items, action),
+          );
+        },
+        onError: () => {
+          dispatchCartAction({ type: 'SET_ITEMS', items: previousCartItems });
+        },
+      });
     } catch {
-      dispatchCartAction({ type: 'SET_ITEMS', items: previousCartItems });
+      return;
     }
   };
 

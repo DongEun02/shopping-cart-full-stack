@@ -10,14 +10,15 @@ import type {
   CouponDiscount,
 } from '../../../entities/coupon/types';
 import type { Order } from '../../../entities/order/types';
+import type { Mutate } from '../../../shared/hooks/useMutation';
 
 export type OrderContextValue = OrderState & {
   orderId: string;
-  isLoading: boolean;
+  isPending: boolean;
   error: Error | null;
   mutationError: Error | null;
   isMutationLoading: boolean;
-  mutate: (mutationFn: () => Promise<void>) => Promise<void>;
+  mutate: Mutate;
   fetchOrder: (id: string) => Promise<Order>;
   updateRemoteArea: (id: string, isRemoteArea: boolean) => Promise<void>;
   fetchCoupons: (id: string) => Promise<Coupon[]>;

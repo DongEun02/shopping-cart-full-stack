@@ -23,7 +23,7 @@ import CartSummary from './ui/CartSummary';
 export default function CartPage() {
   const navigate = useNavigate();
 
-  const { cartItems, isLoading, error } = useCartItems();
+  const { cartItems, isPending, error } = useCartItems();
   const mutationError = useCartMutationError();
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
@@ -62,7 +62,7 @@ export default function CartPage() {
     }
   };
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Flex
         align="center"

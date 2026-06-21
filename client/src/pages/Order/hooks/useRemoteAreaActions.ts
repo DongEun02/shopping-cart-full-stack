@@ -20,15 +20,22 @@ export function useRemoteAreaActions() {
     dispatchOrderAction({ type: 'CHANGE_REMOTE_AREA', isRemoteArea });
 
     try {
-      await mutate(async () => {
-        await updateRemoteArea(orderId, isRemoteArea);
-        const order = await fetchOrder(orderId);
-
-        dispatchOrderAction({ type: 'SET_ORDER', order });
-        setQueryData<Order>(`order:${orderId}`, () => order);
-      });
+      await mutate(
+        async () => {
+          await updateRemoteArea(orderId, isRemoteArea);
+          return fetchOrder(orderId);
+        },
+        {
+          onSuccess: (order) => {
+            dispatchOrderAction({ type: 'SET_ORDER', order });
+            setQueryData<Order>(`order:${orderId}`, () => order);
+          },
+          onError: () => {
+            dispatchOrderAction({ type: 'SET_ORDER', order: previousOrder });
+          },
+        },
+      );
     } catch {
-      dispatchOrderAction({ type: 'SET_ORDER', order: previousOrder });
       return;
     }
   };

@@ -6,7 +6,7 @@ import {
   within,
 } from '@testing-library/react';
 import { http, HttpResponse, delay } from 'msw';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 
 import {
   deleteCartItem,
@@ -20,6 +20,12 @@ import CartProvider from '../../src/pages/cart/providers/CartProvider';
 import { mockCartItems } from '../../src/mocks/handlers';
 import { server } from '../../src/mocks/server';
 
+function CurrentPath() {
+  const location = useLocation();
+
+  return <span data-testid="current-path">{location.pathname}</span>;
+}
+
 function renderCartPage() {
   return render(
     <MemoryRouter>
@@ -32,6 +38,7 @@ function renderCartPage() {
       >
         <CartPage />
       </CartProvider>
+      <CurrentPath />
     </MemoryRouter>,
   );
 }
@@ -299,6 +306,59 @@ describe('CartPage', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '주문 확인' })).toBeEnabled();
     });
+  });
+
+  test('주문 확인 버튼을 누르면 선택된 상품으로 주문을 생성하고 주문 페이지로 이동한다.', async () => {
+    let requestBody: unknown;
+
+    server.use(
+      http.post('/orders', async ({ request }) => {
+        requestBody = await request.json();
+
+        return HttpResponse.json({ id: 'created-order-id' }, { status: 201 });
+      }),
+    );
+
+    renderCartPage();
+
+    const firstItem = await screen.findByText('상품이름A');
+    const firstCartItem = firstItem.closest('li');
+
+    fireEvent.click(within(firstCartItem as HTMLElement).getByRole('checkbox'));
+    fireEvent.click(screen.getByRole('button', { name: '주문 확인' }));
+
+    await waitFor(() => {
+      expect(requestBody).toEqual({
+        items: [{ productId: 'product-b', quantity: 2 }],
+      });
+      expect(screen.getByTestId('current-path')).toHaveTextContent(
+        '/order/created-order-id',
+      );
+    });
+  });
+
+  test('주문 생성 실패 시 에러 메시지를 보여주고 장바구니 페이지에 머문다.', async () => {
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+    try {
+      server.use(
+        http.post('/orders', () => {
+          return HttpResponse.json(null, { status: 500 });
+        }),
+      );
+
+      renderCartPage();
+
+      await screen.findByText('상품이름A');
+      fireEvent.click(screen.getByRole('button', { name: '주문 확인' }));
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith('주문을 생성하지 못했습니다.');
+        expect(screen.getByTestId('current-path')).toHaveTextContent('/');
+      });
+    } finally {
+      alertSpy.mockRestore();
+    }
   });
 
   test('상품 선택을 해제하면 선택된 상품 기준으로 주문 금액을 보여준다.', async () => {

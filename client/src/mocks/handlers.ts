@@ -62,6 +62,21 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 });
   }),
 
+  http.post('/orders', async ({ request }) => {
+    const body = (await request.json()) as {
+      items?: { productId: string; quantity: number }[];
+    };
+
+    if (!Array.isArray(body.items) || body.items.length === 0) {
+      return HttpResponse.json(
+        { message: '유효하지 않은 형식입니다.' },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({ id: 'order-1' }, { status: 201 });
+  }),
+
   http.delete('/carts/:id', () => {
     return new HttpResponse(null, { status: 204 });
   }),

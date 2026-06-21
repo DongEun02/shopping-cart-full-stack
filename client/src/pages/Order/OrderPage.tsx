@@ -12,72 +12,31 @@ import Spinner from '../../shared/ui/Spinner';
 import Txt from '../../shared/ui/Txt';
 
 import { colors } from '../../shared/styles/theme';
-import {
-  fetchOrder,
-  updateOrderRemoteArea,
-} from '../../entities/order/api/orderApi';
-import type { Order } from '../../entities/order/types';
-import { setQueryData, useQuery } from '../../shared/hooks/useQuery';
-import { updateOrderCoupons } from '../../entities/coupon/api/couponApi';
-import type { CouponCode } from '../../entities/coupon/types';
-
-import { useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useOrder } from './hooks/useOrder';
+import { useCouponActions } from './hooks/useCouponActions';
+import { useRemoteAreaActions } from './hooks/useRemoteAreaActions';
+import { useOrderMutationError } from './hooks/useOrderMutationError';
+import { getOrderProductCount } from '../../entities/order/selector';
 
 export default function OrderPage() {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [updatedOrder, setUpdatedOrder] = useState<Order | null>(null);
-  const [isUpdatingRemoteArea, setIsUpdatingRemoteArea] = useState(false);
   const navigate = useNavigate();
-  const { id = '' } = useParams();
   const {
-    data: order,
+    order,
     isLoading,
     error,
-  } = useQuery(`order:${id}`, () => fetchOrder(id));
+    isModalOpen,
+  } = useOrder();
+  const { openCouponModal, closeCouponModal } = useCouponActions();
+  const { changeRemoteArea } = useRemoteAreaActions();
+  const mutationError = useOrderMutationError();
 
-  const handleModal = () => {
-    setIsModalOpen((prev) => !prev);
-  };
+  useEffect(() => {
+    if (!mutationError) return;
 
-  const submitCoupon = async (couponCodes: CouponCode[]) => {
-    try {
-      await updateOrderCoupons(id, couponCodes);
-      const nextOrder = await fetchOrder(id);
-
-      setUpdatedOrder(nextOrder);
-      setQueryData<Order>(`order:${id}`, () => nextOrder);
-      setIsModalOpen(false);
-    } catch (error) {
-      alert(
-        error instanceof Error
-          ? error.message
-          : '알 수 없는 에러가 발생했습니다.',
-      );
-    }
-  };
-
-  const handleRemoteArea = async (isRemoteArea: boolean) => {
-    if (isUpdatingRemoteArea) return;
-
-    setIsUpdatingRemoteArea(true);
-
-    try {
-      await updateOrderRemoteArea(id, isRemoteArea);
-      const nextOrder = await fetchOrder(id);
-
-      setUpdatedOrder(nextOrder);
-      setQueryData<Order>(`order:${id}`, () => nextOrder);
-    } catch (error) {
-      alert(
-        error instanceof Error
-          ? error.message
-          : '알 수 없는 에러가 발생했습니다.',
-      );
-    } finally {
-      setIsUpdatingRemoteArea(false);
-    }
-  };
+    alert(mutationError.message);
+  }, [mutationError]);
 
   if (isLoading) {
     return (
@@ -115,10 +74,7 @@ export default function OrderPage() {
     );
   }
 
-  const displayedOrder = updatedOrder ?? order;
-  const productCount = displayedOrder.products.reduce((total, product) => {
-    return total + product.quantity;
-  }, 0);
+  const productCount = getOrderProductCount(order);
 
   return (
     <Flex
@@ -144,27 +100,27 @@ export default function OrderPage() {
         />
       </Header>
       <OrderSection
-        productTypeCount={displayedOrder.products.length}
+        productTypeCount={order.products.length}
         productCount={productCount}
       >
-        <OrderList products={displayedOrder.products} />
-        <CouponButton isInModal={false} onClick={handleModal}>
+        <OrderList products={order.products} />
+        <CouponButton isInModal={false} onClick={openCouponModal}>
           쿠폰 적용
         </CouponButton>
         <Area
-          isRemoteArea={displayedOrder.isRemoteArea}
-          onChange={handleRemoteArea}
+          isRemoteArea={order.isRemoteArea}
+          onChange={changeRemoteArea}
         />
-        <OrderSummary amount={displayedOrder.amount} />
+        <OrderSummary amount={order.amount} />
       </OrderSection>
 
       <BottomButton
         onClick={() =>
           navigate('/payment-checkout', {
             state: {
-              productTypeCount: displayedOrder.products.length,
+              productTypeCount: order.products.length,
               productCount,
-              totalAmount: displayedOrder.amount.totalAmount,
+              totalAmount: order.amount.totalAmount,
             },
           })
         }
@@ -183,12 +139,7 @@ export default function OrderPage() {
               zIndex: 1,
             }}
           />
-          <Modal
-            orderId={id}
-            initialDiscountAmount={displayedOrder.amount.discountAmount}
-            onClose={handleModal}
-            onSubmit={submitCoupon}
-          />
+          <Modal onClose={closeCouponModal} />
         </>
       )}
     </Flex>

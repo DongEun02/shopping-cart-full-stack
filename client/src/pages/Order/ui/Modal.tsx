@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import Flex from '../../../shared/layout/Flex';
 import Row from '../../../shared/layout/Row';
 import Txt from '../../../shared/ui/Txt';
@@ -10,108 +8,24 @@ import info from '../../../assets/Info-outline.svg';
 import { colors } from '../../../shared/styles/theme';
 import List from '../../../shared/layout/List';
 import Coupon from '../../../entities/coupon/ui/Coupon';
-import {
-  calculateCouponDiscount,
-  fetchOrderCoupons,
-} from '../../../entities/coupon/api/couponApi';
-import type {
-  Coupon as CouponType,
-  CouponCode,
-} from '../../../entities/coupon/types';
 import Spinner from '../../../shared/ui/Spinner';
+import { useOrder } from '../hooks/useOrder';
+import { useCouponActions } from '../hooks/useCouponActions';
+import { useOrderCoupons } from '../hooks/useOrderCoupons';
 
 type ModalProps = {
-  orderId: string;
-  initialDiscountAmount: number;
   onClose: () => void;
-  onSubmit: (couponCodes: CouponCode[]) => Promise<void>;
 };
 
-export default function Modal({
-  orderId,
-  initialDiscountAmount,
-  onClose,
-  onSubmit,
-}: ModalProps) {
-  const [coupons, setCoupons] = useState<CouponType[]>([]);
-  const [selectedCouponCodes, setSelectedCouponCodes] = useState<CouponCode[]>(
-    [],
-  );
-  const [discountAmount, setDiscountAmount] = useState(initialDiscountAmount);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let ignore = false;
-
-    fetchOrderCoupons(orderId)
-      .then((response) => {
-        if (ignore) return;
-
-        setCoupons(response);
-        setSelectedCouponCodes(
-          response.filter(({ isSelected }) => isSelected).map(({ id }) => id),
-        );
-      })
-      .catch((error) => {
-        if (ignore) return;
-
-        setError(
-          error instanceof Error
-            ? error
-            : new Error('알 수 없는 에러가 발생했습니다.'),
-        );
-      })
-      .finally(() => {
-        if (!ignore) setIsLoading(false);
-      });
-
-    return () => {
-      ignore = true;
-    };
-  }, [orderId]);
-
-  const changeCouponSelection = async (
-    couponCode: CouponCode,
-    checked: boolean,
-  ) => {
-    const nextCouponCodes = checked
-      ? [...selectedCouponCodes, couponCode]
-      : selectedCouponCodes.filter((code) => code !== couponCode);
-
-    if (nextCouponCodes.length > 2 || isCalculating) return;
-
-    setIsCalculating(true);
-
-    try {
-      const result = await calculateCouponDiscount(orderId, nextCouponCodes);
-
-      setSelectedCouponCodes(nextCouponCodes);
-      setDiscountAmount(result.discountAmount);
-    } catch (error) {
-      alert(
-        error instanceof Error
-          ? error.message
-          : '알 수 없는 에러가 발생했습니다.',
-      );
-    } finally {
-      setIsCalculating(false);
-    }
-  };
-
-  const submitCoupons = async () => {
-    if (isSubmitting || isCalculating) return;
-
-    setIsSubmitting(true);
-
-    try {
-      await onSubmit(selectedCouponCodes);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+export default function Modal({ onClose }: ModalProps) {
+  const {
+    coupons,
+    selectedCouponCodes,
+    couponDiscountAmount,
+    isMutationLoading,
+  } = useOrder();
+  const { isLoading, error } = useOrderCoupons();
+  const { changeCouponSelection, submitCoupons } = useCouponActions();
 
   return (
     <Flex
@@ -182,10 +96,10 @@ export default function Modal({
       </Flex>
       <CouponButton
         isInModal={true}
-        disabled={isLoading || !!error || isCalculating || isSubmitting}
+        disabled={isLoading || !!error || isMutationLoading}
         onClick={submitCoupons}
       >
-        총 {discountAmount.toLocaleString()}원 할인 쿠폰 사용하기
+        총 {couponDiscountAmount.toLocaleString()}원 할인 쿠폰 사용하기
       </CouponButton>
     </Flex>
   );

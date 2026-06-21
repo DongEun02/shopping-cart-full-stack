@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse, delay } from 'msw';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import OrderPage from '../../src/pages/Order/OrderPage';
+import OrderRoute from '../../src/pages/Order/OrderRoute';
 import CheckoutPage from '../../src/pages/checkout/CheckoutPage';
 import { server } from '../../src/mocks/server';
 
@@ -10,7 +10,7 @@ function renderOrderPage() {
   return render(
     <MemoryRouter initialEntries={['/order/order-1']}>
       <Routes>
-        <Route path="/order/:id" element={<OrderPage />} />
+        <Route path="/order/:id" element={<OrderRoute />} />
         <Route path="/payment-checkout" element={<CheckoutPage />} />
       </Routes>
     </MemoryRouter>,

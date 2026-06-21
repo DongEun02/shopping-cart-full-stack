@@ -36,7 +36,12 @@ export function useCouponActions() {
 
     if (nextCouponCodes.length > 2 || isMutationLoading) return;
 
+    const previousCouponCodes = selectedCouponCodes;
     const result: { current: CouponDiscount | null } = { current: null };
+    dispatchOrderAction({
+      type: 'CHANGE_COUPON_SELECTION',
+      couponCodes: nextCouponCodes,
+    });
 
     try {
       await mutate(async () => {
@@ -46,11 +51,14 @@ export function useCouponActions() {
       if (!result.current) return;
 
       dispatchOrderAction({
-        type: 'SET_COUPON_SELECTION',
-        couponCodes: nextCouponCodes,
+        type: 'SET_COUPON_DISCOUNT',
         discountAmount: result.current.discountAmount,
       });
     } catch {
+      dispatchOrderAction({
+        type: 'CHANGE_COUPON_SELECTION',
+        couponCodes: previousCouponCodes,
+      });
       return;
     }
   };

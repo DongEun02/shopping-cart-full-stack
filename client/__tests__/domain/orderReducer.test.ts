@@ -53,9 +53,12 @@ describe('orderReducer', () => {
   });
 
   test('쿠폰 할인 계산 결과를 저장한다.', () => {
-    const state = orderReducer(initialOrderState, {
-      type: 'SET_COUPON_SELECTION',
+    const selectedState = orderReducer(initialOrderState, {
+      type: 'CHANGE_COUPON_SELECTION',
       couponCodes: ['FIXED5000', 'FREESHIPPING'],
+    });
+    const state = orderReducer(selectedState, {
+      type: 'SET_COUPON_DISCOUNT',
       discountAmount: 8000,
     });
 
@@ -64,5 +67,18 @@ describe('orderReducer', () => {
       'FREESHIPPING',
     ]);
     expect(state.couponDiscountAmount).toBe(8000);
+  });
+
+  test('도서 산간 지역 선택 상태를 변경한다.', () => {
+    const orderState = orderReducer(initialOrderState, {
+      type: 'SET_ORDER',
+      order,
+    });
+    const state = orderReducer(orderState, {
+      type: 'CHANGE_REMOTE_AREA',
+      isRemoteArea: true,
+    });
+
+    expect(state.order?.isRemoteArea).toBe(true);
   });
 });

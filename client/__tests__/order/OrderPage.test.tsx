@@ -86,6 +86,7 @@ describe('OrderPage', () => {
       }),
       http.patch('/orders/:id', async ({ request }) => {
         requestBody = await request.json();
+        await delay(100);
         isRemoteArea = true;
 
         return new HttpResponse(null, { status: 204 });
@@ -100,9 +101,10 @@ describe('OrderPage', () => {
 
     fireEvent.click(checkbox);
 
+    expect(checkbox).toBeChecked();
+
     await waitFor(() => {
       expect(requestBody).toEqual({ isRemoteArea: true });
-      expect(checkbox).toBeChecked();
       expect(screen.getByText('-6,000원')).toBeInTheDocument();
       expect(screen.getByText('6,000원')).toBeInTheDocument();
     });
@@ -163,6 +165,7 @@ describe('OrderPage', () => {
     server.use(
       http.post('/orders/:id/coupons/discount', async ({ request }) => {
         requestBody = await request.json();
+        await delay(100);
 
         return HttpResponse.json({ discountAmount: 10000 });
       }),
@@ -178,6 +181,8 @@ describe('OrderPage', () => {
     });
     fireEvent.click(freeShippingCoupon);
 
+    expect(freeShippingCoupon).toBeChecked();
+
     await waitFor(() => {
       expect(requestBody).toEqual({
         coupons: ['FIXED5000', 'FREESHIPPING'],
@@ -188,6 +193,41 @@ describe('OrderPage', () => {
         }),
       ).toBeInTheDocument();
     });
+  });
+
+  test('쿠폰 할인 계산 실패 시 이전 선택 상태로 되돌린다.', async () => {
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+    try {
+      server.use(
+        http.post('/orders/:id/coupons/discount', async () => {
+          await delay(50);
+
+          return HttpResponse.json(null, { status: 500 });
+        }),
+      );
+
+      renderOrderPage();
+
+      await screen.findByText('상품이름A');
+      fireEvent.click(screen.getByRole('button', { name: '쿠폰 적용' }));
+
+      const freeShippingCoupon = await screen.findByRole('checkbox', {
+        name: '5만원 이상 구매 시 무료 배송 쿠폰',
+      });
+      fireEvent.click(freeShippingCoupon);
+
+      expect(freeShippingCoupon).toBeChecked();
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          '쿠폰 할인 금액을 계산하지 못했습니다.',
+        );
+        expect(freeShippingCoupon).not.toBeChecked();
+      });
+    } finally {
+      alertSpy.mockRestore();
+    }
   });
 
   test('쿠폰 사용하기를 누르면 선택 쿠폰을 주문에 적용하고 모달을 닫는다.', async () => {

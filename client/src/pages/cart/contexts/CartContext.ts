@@ -11,6 +11,8 @@ export type CartContextValue = {
   isMutationLoading: boolean;
   mutate: (mutationFn: () => Promise<void>) => Promise<void>;
   updateItemQuantity: (id: string, quantity: number) => Promise<void>;
+  updateItemSelection: (id: string, isSelected: boolean) => Promise<void>;
+  updateAllItemsSelection: (isSelected: boolean) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   dispatchCartAction: (action: CartAction) => void;
 };

@@ -11,12 +11,10 @@ import { MemoryRouter } from 'react-router-dom';
 import {
   deleteCartItem,
   fetchCartItems,
+  updateAllCartItemsSelection,
+  updateCartItemSelection,
   updateCartItemQuantity,
 } from '../../src/entities/cart/api/cartApi';
-import {
-  getSelectedCartItemIds,
-  saveSelectedCartItemIds,
-} from '../../src/entities/cart/storage';
 import CartPage from '../../src/pages/cart/CartPage';
 import CartProvider from '../../src/pages/cart/providers/CartProvider';
 import { mockCartItems } from '../../src/mocks/handlers';
@@ -28,9 +26,9 @@ function renderCartPage() {
       <CartProvider
         fetchItems={fetchCartItems}
         updateItemQuantity={updateCartItemQuantity}
+        updateItemSelection={updateCartItemSelection}
+        updateAllItemsSelection={updateAllCartItemsSelection}
         removeItem={deleteCartItem}
-        loadSelectedItemIds={getSelectedCartItemIds}
-        saveSelectedItemIds={saveSelectedCartItemIds}
       >
         <CartPage />
       </CartProvider>
@@ -39,10 +37,6 @@ function renderCartPage() {
 }
 
 describe('CartPage', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
   test('장바구니 조회 중에는 로딩 스피너를 보여준다.', () => {
     server.use(
       http.get('/carts', async () => {
@@ -321,5 +315,91 @@ describe('CartPage', () => {
       expect(screen.getByText('50,000원')).toBeInTheDocument();
     });
     expect(screen.getByText('53,000원')).toBeInTheDocument();
+  });
+
+  test('상품 선택 상태 변경 실패 시 이전 상태로 되돌린다.', async () => {
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+    try {
+      server.use(
+        http.patch('/carts/:id', () => {
+          return HttpResponse.json(null, { status: 500 });
+        }),
+      );
+
+      renderCartPage();
+
+      const firstItem = await screen.findByText('상품이름A');
+      const firstCartItem = firstItem.closest('li');
+      const checkbox = within(
+        firstCartItem as HTMLElement,
+      ).getByRole('checkbox');
+
+      fireEvent.click(checkbox);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          '상품 선택 상태를 변경하지 못했습니다.',
+        );
+        expect(checkbox).toBeChecked();
+      });
+    } finally {
+      alertSpy.mockRestore();
+    }
+  });
+
+  test('전체 선택 상태 변경 실패 시 이전 상태로 되돌린다.', async () => {
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+    try {
+      server.use(
+        http.patch('/carts', () => {
+          return HttpResponse.json(null, { status: 500 });
+        }),
+      );
+
+      renderCartPage();
+
+      const selectAllCheckbox = await screen.findByRole('checkbox', {
+        name: '전체선택',
+      });
+
+      fireEvent.click(selectAllCheckbox);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          '전체 상품 선택 상태를 변경하지 못했습니다.',
+        );
+        expect(selectAllCheckbox).toBeChecked();
+      });
+    } finally {
+      alertSpy.mockRestore();
+    }
+  });
+
+  test('서버에서 받은 상품 선택 상태를 화면에 반영한다.', async () => {
+    server.use(
+      http.get('/carts', () => {
+        return HttpResponse.json([
+          { ...mockCartItems[0], isSelected: false },
+          mockCartItems[1],
+        ]);
+      }),
+    );
+
+    renderCartPage();
+
+    const firstItem = await screen.findByText('상품이름A');
+    const secondItem = screen.getByText('상품이름B');
+    const firstCartItem = firstItem.closest('li');
+    const secondCartItem = secondItem.closest('li');
+
+    expect(
+      within(firstCartItem as HTMLElement).getByRole('checkbox'),
+    ).not.toBeChecked();
+    expect(
+      within(secondCartItem as HTMLElement).getByRole('checkbox'),
+    ).toBeChecked();
+    expect(screen.getByText('50,000원')).toBeInTheDocument();
   });
 });

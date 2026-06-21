@@ -31,11 +31,30 @@ export const handlers = [
   }),
 
   http.patch('/carts/:id', async ({ request }) => {
-    const body = (await request.json()) as { quantity: number };
+    const body = (await request.json()) as {
+      quantity?: number;
+      isSelected?: boolean;
+    };
 
-    if (typeof body.quantity !== 'number') {
+    const hasValidQuantity = typeof body.quantity === 'number';
+    const hasValidSelection = typeof body.isSelected === 'boolean';
+
+    if (!hasValidQuantity && !hasValidSelection) {
       return HttpResponse.json(
-        { message: '상품 수량은 숫자여야 합니다.' },
+        { message: '변경할 장바구니 상태가 올바르지 않습니다.' },
+        { status: 400 },
+      );
+    }
+
+    return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.patch('/carts', async ({ request }) => {
+    const body = (await request.json()) as { isSelected?: boolean };
+
+    if (typeof body.isSelected !== 'boolean') {
+      return HttpResponse.json(
+        { message: '선택 상태가 올바르지 않습니다.' },
         { status: 400 },
       );
     }

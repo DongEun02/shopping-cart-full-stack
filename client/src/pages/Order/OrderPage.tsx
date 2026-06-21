@@ -84,7 +84,7 @@ export default function OrderPage() {
       styles={{
         backgroundColor: colors.white,
         width: '430px',
-        minHeight: '100vh',
+        height: '100dvh',
         margin: '0 auto',
         position: 'relative',
       }}

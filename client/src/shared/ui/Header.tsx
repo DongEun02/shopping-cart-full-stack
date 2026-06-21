@@ -11,6 +11,7 @@ export default function Header({ children }: { children?: ReactNode }) {
       styles={{
         backgroundColor: colors.black,
         height: '64px',
+        flexShrink: 0,
         width: '100%',
         padding: '0 24px',
       }}

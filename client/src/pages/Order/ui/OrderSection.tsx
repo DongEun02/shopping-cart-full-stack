@@ -19,10 +19,14 @@ export default function OrderSection({
       direction="column"
       gap={36}
       styles={{
-        height: '75vh',
-        overflowY: 'scroll',
+        flex: 1,
+        minHeight: 0,
+        overflowY: 'auto',
         width: '100%',
-        padding: '0 24px',
+        padding: '0 24px 100px',
+        '& > *': {
+          flexShrink: 0,
+        },
       }}
     >
       <Flex direction="column" gap={12}>

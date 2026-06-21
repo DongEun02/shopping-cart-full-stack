@@ -27,12 +27,7 @@ export default function OrderItem({ product }: OrderItemProps) {
           />
         }
         center={
-          <Flex
-            direction="column"
-            gap={20}
-            justify="center"
-            styles={{ paddingTop: '36px' }}
-          >
+          <Flex direction="column" gap={20} justify="center">
             <Flex direction="column" gap={4}>
               <Txt variant="label" color="black">
                 {product.name}

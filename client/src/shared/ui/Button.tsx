@@ -132,6 +132,7 @@ export function CouponButton({
       styles={{
         width: '100%',
         height: '48px',
+        flexShrink: 0,
         border: border,
         borderRadius: '5px',
         backgroundColor: background,

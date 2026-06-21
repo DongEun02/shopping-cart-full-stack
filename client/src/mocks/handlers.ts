@@ -105,6 +105,19 @@ export const handlers = [
     });
   }),
 
+  http.patch('/orders/:id', async ({ request }) => {
+    const body = (await request.json()) as { isRemoteArea?: boolean };
+
+    if (typeof body.isRemoteArea !== 'boolean') {
+      return HttpResponse.json(
+        { message: '유효하지 않은 형식입니다.' },
+        { status: 400 },
+      );
+    }
+
+    return new HttpResponse(null, { status: 204 });
+  }),
+
   http.delete('/carts/:id', () => {
     return new HttpResponse(null, { status: 204 });
   }),

@@ -158,7 +158,17 @@ export default function OrderPage() {
         <OrderSummary amount={displayedOrder.amount} />
       </OrderSection>
 
-      <BottomButton onClick={() => navigate('/payment-checkout')}>
+      <BottomButton
+        onClick={() =>
+          navigate('/payment-checkout', {
+            state: {
+              productTypeCount: displayedOrder.products.length,
+              productCount,
+              totalAmount: displayedOrder.amount.totalAmount,
+            },
+          })
+        }
+      >
         결제하기
       </BottomButton>
 

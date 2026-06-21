@@ -27,3 +27,9 @@ export type Order = {
   isRemoteArea: boolean;
   amount: OrderAmount;
 };
+
+export type CheckoutState = {
+  productTypeCount: number;
+  productCount: number;
+  totalAmount: number;
+};

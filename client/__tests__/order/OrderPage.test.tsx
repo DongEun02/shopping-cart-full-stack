@@ -3,6 +3,7 @@ import { http, HttpResponse, delay } from 'msw';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import OrderPage from '../../src/pages/Order/OrderPage';
+import CheckoutPage from '../../src/pages/checkout/CheckoutPage';
 import { server } from '../../src/mocks/server';
 
 function renderOrderPage() {
@@ -10,6 +11,7 @@ function renderOrderPage() {
     <MemoryRouter initialEntries={['/order/order-1']}>
       <Routes>
         <Route path="/order/:id" element={<OrderPage />} />
+        <Route path="/payment-checkout" element={<CheckoutPage />} />
       </Routes>
     </MemoryRouter>,
   );
@@ -220,5 +222,18 @@ describe('OrderPage', () => {
         screen.queryByText('쿠폰을 선택해 주세요'),
       ).not.toBeInTheDocument();
     });
+  });
+
+  test('결제하기를 누르면 상품 종류, 상품 수량, 총 결제 금액을 전달한다.', async () => {
+    renderOrderPage();
+
+    await screen.findByText('상품이름A');
+    fireEvent.click(screen.getByRole('button', { name: '결제하기' }));
+
+    expect(await screen.findByText('결제 확인')).toBeInTheDocument();
+    expect(
+      screen.getByText(/총 2종류의 상품 4개를 주문했습니다./),
+    ).toBeInTheDocument();
+    expect(screen.getByText('115,000원')).toBeInTheDocument();
   });
 });

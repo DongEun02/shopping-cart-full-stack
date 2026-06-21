@@ -3,8 +3,18 @@ import Image from '../../../shared/ui/Image';
 import Txt from '../../../shared/ui/Txt';
 import Flex from '../../../shared/layout/Flex';
 import Row from '../../../shared/layout/Row';
+import type { OrderAmount } from '../../../entities/order/types';
 
-export default function CartSummary() {
+type OrderSummaryProps = {
+  amount: OrderAmount;
+};
+
+export default function OrderSummary({ amount }: OrderSummaryProps) {
+  const discountAmount =
+    amount.discountAmount === 0
+      ? '0원'
+      : `-${amount.discountAmount.toLocaleString()}원`;
+
   return (
     <Flex as="section" direction="column" gap={12} styles={{ width: '100%' }}>
       <Flex as="span" gap={4} align="center">
@@ -30,7 +40,7 @@ export default function CartSummary() {
           }
           right={
             <Txt variant="title" color="black">
-              70,000원
+              {amount.orderAmount.toLocaleString()}원
             </Txt>
           }
         />
@@ -43,7 +53,7 @@ export default function CartSummary() {
           }
           right={
             <Txt variant="title" color="black">
-              -6,000원
+              {discountAmount}
             </Txt>
           }
         />
@@ -56,7 +66,7 @@ export default function CartSummary() {
           }
           right={
             <Txt variant="title" color="black">
-              6,000원
+              {amount.shippingFee.toLocaleString()}원
             </Txt>
           }
         />
@@ -77,7 +87,7 @@ export default function CartSummary() {
           }
           right={
             <Txt variant="title" color="black">
-              70,000원
+              {amount.totalAmount.toLocaleString()}원
             </Txt>
           }
         />

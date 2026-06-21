@@ -2,8 +2,13 @@ import Image from '../../../shared/ui/Image';
 import Row from '../../../shared/layout/Row';
 import Flex from '../../../shared/layout/Flex';
 import Txt from '../../../shared/ui/Txt';
+import type { OrderProduct } from '../types';
 
-export default function OrderItem() {
+type OrderItemProps = {
+  product: OrderProduct;
+};
+
+export default function OrderItem({ product }: OrderItemProps) {
   return (
     <li
       css={{
@@ -14,9 +19,10 @@ export default function OrderItem() {
       <Row
         left={
           <Image
+            src={product.image ?? undefined}
             width={112}
             height={112}
-            alt="상품 이미지"
+            alt={product.name}
             styles={{ borderRadius: '8px' }}
           />
         }
@@ -29,16 +35,16 @@ export default function OrderItem() {
           >
             <Flex direction="column" gap={4}>
               <Txt variant="label" color="black">
-                상품이름
+                {product.name}
               </Txt>
 
               <Txt variant="title" color="black">
-                35,000원
+                {product.price.toLocaleString()}원
               </Txt>
             </Flex>
 
             <Txt variant="label" color="black">
-              2개
+              {product.quantity}개
             </Txt>
           </Flex>
         }

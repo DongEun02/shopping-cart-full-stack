@@ -8,15 +8,25 @@ import Modal from './ui/Modal';
 import { BottomButton, CouponButton } from '../../shared/ui/Button';
 import OrderSummary from './ui/OrderSummary';
 import Area from './ui/Area';
+import Spinner from '../../shared/ui/Spinner';
+import Txt from '../../shared/ui/Txt';
 
 import { colors } from '../../shared/styles/theme';
+import { fetchOrder } from '../../entities/order/api/orderApi';
+import { useQuery } from '../../shared/hooks/useQuery';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 
 export default function OrderPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { id = '' } = useParams();
+  const {
+    data: order,
+    isLoading,
+    error,
+  } = useQuery(`order:${id}`, () => fetchOrder(id));
 
   const handleModal = () => {
     setIsModalOpen((prev) => !prev);
@@ -25,6 +35,46 @@ export default function OrderPage() {
   const submitCoupon = () => {
     setIsModalOpen(false);
   };
+
+  if (isLoading) {
+    return (
+      <Flex
+        align="center"
+        justify="center"
+        styles={{
+          backgroundColor: colors.white,
+          width: '430px',
+          minHeight: '100vh',
+          margin: '0 auto',
+        }}
+      >
+        <Spinner />
+      </Flex>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <Flex
+        align="center"
+        justify="center"
+        styles={{
+          backgroundColor: colors.white,
+          width: '430px',
+          minHeight: '100vh',
+          margin: '0 auto',
+        }}
+      >
+        <Txt variant="label" color="error">
+          {error?.message ?? '주문서를 불러오지 못했습니다.'}
+        </Txt>
+      </Flex>
+    );
+  }
+
+  const productCount = order.products.reduce((total, product) => {
+    return total + product.quantity;
+  }, 0);
 
   return (
     <Flex
@@ -49,13 +99,16 @@ export default function OrderPage() {
           styles={{ cursor: 'pointer' }}
         />
       </Header>
-      <OrderSection>
-        <OrderList />
+      <OrderSection
+        productTypeCount={order.products.length}
+        productCount={productCount}
+      >
+        <OrderList products={order.products} />
         <CouponButton isInModal={false} onClick={handleModal}>
           쿠폰 적용
         </CouponButton>
-        <Area />
-        <OrderSummary />
+        <Area isRemoteArea={order.isRemoteArea} />
+        <OrderSummary amount={order.amount} />
       </OrderSection>
 
       <BottomButton onClick={() => navigate('/payment-checkout')}>

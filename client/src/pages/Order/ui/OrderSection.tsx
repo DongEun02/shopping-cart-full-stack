@@ -3,10 +3,16 @@ import Flex from '../../../shared/layout/Flex';
 import Txt from '../../../shared/ui/Txt';
 
 type OrderSectionProps = {
+  productTypeCount: number;
+  productCount: number;
   children: ReactNode;
 };
 
-export default function OrderSection({ children }: OrderSectionProps) {
+export default function OrderSection({
+  productTypeCount,
+  productCount,
+  children,
+}: OrderSectionProps) {
   return (
     <Flex
       as="section"
@@ -24,7 +30,7 @@ export default function OrderSection({ children }: OrderSectionProps) {
           주문 확인
         </Txt>
         <Txt variant="label" color="text">
-          총 1종류의 상품 2개를 주문합니다. <br />
+          총 {productTypeCount}종류의 상품 {productCount}개를 주문합니다. <br />
           최종 결제 금액을 확인해 주세요.
         </Txt>
       </Flex>

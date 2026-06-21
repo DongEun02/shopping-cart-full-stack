@@ -1,13 +1,9 @@
 import { API_BASE_URL } from '../../../shared/config/env';
-
-export type CreateOrderItem = {
-  productId: string;
-  quantity: number;
-};
-
-type CreateOrderResponse = {
-  id: string;
-};
+import type {
+  CreateOrderItem,
+  CreateOrderResponse,
+  Order,
+} from '../types';
 
 export async function createOrder(
   items: CreateOrderItem[],
@@ -22,6 +18,16 @@ export async function createOrder(
 
   if (!response.ok) {
     throw new Error('주문을 생성하지 못했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function fetchOrder(id: string): Promise<Order> {
+  const response = await fetch(`${API_BASE_URL}/orders/${id}`);
+
+  if (!response.ok) {
+    throw new Error('주문서를 불러오지 못했습니다.');
   }
 
   return response.json();

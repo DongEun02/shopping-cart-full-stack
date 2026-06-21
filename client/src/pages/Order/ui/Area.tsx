@@ -2,7 +2,11 @@ import Flex from '../../../shared/layout/Flex';
 import Checkbox from '../../../shared/ui/CheckBox';
 import Txt from '../../../shared/ui/Txt';
 
-export default function Area() {
+type AreaProps = {
+  isRemoteArea: boolean;
+};
+
+export default function Area({ isRemoteArea }: AreaProps) {
   const handleRemoteArea = () => {
     // 도서 산간 지역 api
   };
@@ -13,7 +17,7 @@ export default function Area() {
         배송 정보
       </Txt>
       <Checkbox
-        checked={false}
+        checked={isRemoteArea}
         onChange={handleRemoteArea}
       >
         <Txt variant="label" color="text">

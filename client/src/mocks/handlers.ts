@@ -77,6 +77,34 @@ export const handlers = [
     return HttpResponse.json({ id: 'order-1' }, { status: 201 });
   }),
 
+  http.get('/orders/:id', () => {
+    return HttpResponse.json({
+      products: [
+        {
+          productId: 'product-a',
+          name: '상품이름A',
+          price: 35000,
+          image: null,
+          quantity: 2,
+        },
+        {
+          productId: 'product-b',
+          name: '상품이름B',
+          price: 25000,
+          image: null,
+          quantity: 2,
+        },
+      ],
+      isRemoteArea: false,
+      amount: {
+        orderAmount: 120000,
+        discountAmount: 5000,
+        shippingFee: 0,
+        totalAmount: 115000,
+      },
+    });
+  }),
+
   http.delete('/carts/:id', () => {
     return new HttpResponse(null, { status: 204 });
   }),

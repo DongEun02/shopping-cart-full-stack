@@ -12,7 +12,7 @@ function App() {
       <Global styles={globalStyles} />
       <Routes>
         <Route path="/" element={<CartRoute />} />
-        <Route path="/order" element={<OrderPage />} />
+        <Route path="/order/:id" element={<OrderPage />} />
         <Route path="/payment-checkout" element={<CheckoutPage />} />
       </Routes>
     </>

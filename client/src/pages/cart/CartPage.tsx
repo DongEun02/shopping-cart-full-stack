@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -7,6 +7,7 @@ import {
   calculateTotalAmount,
 } from '../../entities/cart/calculate';
 import { getSelectedCartItems } from '../../entities/cart/selector';
+import { createOrder } from '../../entities/order/api/orderApi';
 import { colors } from '../../shared/styles/theme';
 import Flex from '../../shared/layout/Flex';
 import { BottomButton } from '../../shared/ui/Button';
@@ -24,6 +25,7 @@ export default function CartPage() {
 
   const { cartItems, isLoading, error } = useCartItems();
   const mutationError = useCartMutationError();
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
   const selectedItems = getSelectedCartItems(cartItems);
   const orderAmount = calculateOrderAmount(selectedItems);
@@ -35,6 +37,30 @@ export default function CartPage() {
 
     alert(mutationError.message);
   }, [mutationError]);
+
+  const handleCreateOrder = async () => {
+    if (isCreatingOrder || selectedItems.length === 0) return;
+
+    const items = selectedItems.map(({ product, quantity }) => ({
+      productId: product.id,
+      quantity,
+    }));
+
+    setIsCreatingOrder(true);
+
+    try {
+      const { id } = await createOrder(items);
+      navigate(`/order/${id}`);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : '알 수 없는 에러가 발생했습니다.',
+      );
+    } finally {
+      setIsCreatingOrder(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -98,10 +124,10 @@ export default function CartPage() {
         />
       </CartSection>
       <BottomButton
-        disabled={selectedItems.length === 0}
-        onClick={() => navigate('/order')}
+        disabled={selectedItems.length === 0 || isCreatingOrder}
+        onClick={handleCreateOrder}
       >
-        주문 확인
+        {isCreatingOrder ? '주문 생성 중' : '주문 확인'}
       </BottomButton>
     </Flex>
   );
